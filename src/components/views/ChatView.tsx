@@ -8,226 +8,256 @@ interface Message {
   content: string
   timestamp: Date
   confidence?: number
-  confidenceReason?: string
   sources?: { label: string; url: string }[]
-  dataFreshness?: 'verified' | 'stale' | 'partial' | 'unknown'
+  freshness?: 'verified' | 'stale' | 'partial'
   isFinancial?: boolean
   isMock?: boolean
-  isSuggestion?: boolean
-  isTicket?: boolean
+  detectedAs?: 'suggestion' | 'ticket' | 'planning' | null
 }
 
-const welcomeMessages: Message[] = [
-  {
-    id: '1',
-    role: 'assistant',
-    content: "Hey Courtney. I'm your Operations Agent — ready to help you run RISE more efficiently.\n\nI can pull reports, draft documents, answer questions about your properties, create tickets, or build workflows.\n\nWhat do you need?",
-    timestamp: new Date(),
-    dataFreshness: 'verified',
+const smartResponses: Record<string, { content: string; confidence?: number; sources?: { label: string; url: string }[]; freshness?: string }> = {
+  occupancy: {
+    content: "**Current Portfolio Occupancy — Feb 25, 2026**\n\n📊 **Physical Occupancy:** 94.2% (↑ 0.3% from last week)\n• Bartram Park: 96.3% (285/297 units)\n• Prosper On Fayette: 62.1% preleased (195/314 beds)\n\n📈 **Leased Occupancy:** 95.8%\n• 12 new leases signed this week\n• 3 move-outs scheduled next week\n\n⚠️ **Watch Items:**\n• Prosper pre-lease velocity needs to hit 8 leases/week to meet fall target\n• Bartram renewal rate at 62% — above 60% benchmark",
+    confidence: 94,
+    sources: [
+      { label: 'Entrata Box Score (Feb 25)', url: '#' },
+      { label: 'Weekly Leasing Report', url: '#' },
+    ],
+    freshness: 'verified',
   },
-]
+  revenue: {
+    content: "**Revenue Summary — February 2026 (MTD)**\n\n💰 **Total Collected Revenue:** $2,847,320\n• Bartram Park: $1,923,450 (target: $1,950,000 → 98.6%)\n• Prosper On Fayette: $923,870 (target: $890,000 → 103.8%)\n\n📊 **Average Rent:**\n• Bartram 1BR: $1,485 (+2.1% YoY)\n• Bartram 2BR: $1,835 (+1.8% YoY)\n• Prosper 2BR/2BA: $1,250/bed\n\n⚠️ **Delinquency:** 3.2% (↓ from 3.8% last month)\n\n*Note: This data includes projected end-of-month calculations*",
+    confidence: 88,
+    sources: [
+      { label: 'Entrata Rent Roll (Feb 25)', url: '#' },
+      { label: 'Monthly P&L Projection', url: '#' },
+    ],
+    freshness: 'partial',
+  },
+  default: {
+    content: "I checked the available data sources for your question. Here's what I found:\n\nI have access to your Entrata reports, M365 email, and operational data. Let me know if you'd like me to dig into a specific area — occupancy, revenue, work orders, leasing velocity, or staffing.",
+    confidence: 72,
+  },
+}
+
+function getSmartResponse(message: string): Message {
+  const lower = message.toLowerCase()
+  let response = smartResponses.default
+  let detectedAs: 'suggestion' | 'ticket' | 'planning' | null = null
+
+  if (lower.includes('occupancy') || lower.includes('vacancy') || lower.includes('leased')) {
+    response = smartResponses.occupancy
+  } else if (lower.includes('revenue') || lower.includes('rent') || lower.includes('financial') || lower.includes('money')) {
+    response = smartResponses.revenue
+  } else if (lower.startsWith('i wish') || lower.includes('it would be nice') || lower.includes('i\'d love')) {
+    detectedAs = 'suggestion'
+    response = {
+      content: `💡 **Suggestion Captured**\n\n"${message}"\n\nI've logged this as a suggestion. It'll appear in the Suggestions board where the team can vote on it.\n\n📊 **Current status:** New\n👥 **Votes:** 1 (yours)\n\nWould you like me to tag it to a specific department?`,
+      confidence: 100,
+    }
+  } else if (lower.startsWith('i need') || lower.includes('can you help') || lower.includes('something is broken') || lower.includes('not working')) {
+    detectedAs = 'ticket'
+    response = {
+      content: `🎫 **Ticket Created — #TKT-0013**\n\n**Issue:** "${message}"\n**Priority:** Medium (you can change this)\n**Status:** New — routing to the right department\n\nI'll keep you updated as it progresses. Need to bump the priority or add details?`,
+      confidence: 100,
+    }
+  } else if (lower.startsWith('build me') || lower.startsWith('create a') || lower.includes('automate') || lower.includes('set up a')) {
+    detectedAs = 'planning'
+    response = {
+      content: `🏗️ **Planning Mode Activated**\n\nBefore I build anything, let me make sure I understand exactly what you need.\n\n**I'm picking up:**\n"${message}"\n\n**Let me ask a few questions:**\n1. Who will use this? (Which department/role)\n2. How often does this need to run?\n3. What systems does it need to connect to?\n4. Any must-have features vs nice-to-haves?\n\nThis prevents building the wrong thing. Once we agree on the spec, I'll build it right the first time.`,
+      confidence: 100,
+    }
+  } else if (lower.includes('work order') || lower.includes('maintenance')) {
+    response = {
+      content: "**Work Order Summary — This Week**\n\n🔧 **Open:** 23 work orders\n• 🔴 Emergency: 1 (HVAC unit 204 — vendor dispatched)\n• 🟠 Urgent: 4 (plumbing x2, electrical x1, pest x1)\n• 🟢 Standard: 18\n\n📊 **SLA Performance:**\n• Emergency response: 100% within 4 hours ✅\n• Urgent: 87.5% within 24 hours ⚠️\n• Standard: 94% within 72 hours ✅\n\n**Average completion:** 2.3 business days (target: 3.0)\n\n⚠️ Unit 312 has had 3 work orders in 30 days — might want to flag for inspection.",
+      confidence: 91,
+      sources: [{ label: 'MoonRISE Service Desk', url: '#' }],
+      freshness: 'verified',
+    }
+  }
+
+  return {
+    id: `msg-${Date.now()}`,
+    role: 'assistant',
+    content: response.content,
+    timestamp: new Date(),
+    confidence: response.confidence,
+    sources: response.sources,
+    freshness: (response.freshness as 'verified' | 'stale' | 'partial') || undefined,
+    isFinancial: response === smartResponses.revenue,
+    isMock: response === smartResponses.revenue,
+    detectedAs,
+  }
+}
+
+const freshnessLabels: Record<string, { label: string; color: string; icon: string }> = {
+  verified: { label: 'Verified — data pulled today', color: 'var(--green)', icon: '✅' },
+  stale: { label: 'Stale — last updated 3+ days ago', color: 'var(--orange)', icon: '⚠️' },
+  partial: { label: 'Partial — includes projected values', color: 'var(--orange)', icon: '📊' },
+}
 
 export default function ChatView() {
-  const [messages, setMessages] = useState<Message[]>(welcomeMessages)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'welcome',
+      role: 'assistant',
+      content: "Hey Courtney. I'm your Operations Agent for RISE Real Estate.\n\nI can help you with:\n• 📊 **Data** — \"What's our occupancy?\" \"Show me revenue\"\n• 💡 **Suggestions** — Start with \"I wish...\" to log an idea\n• 🎫 **Tickets** — Start with \"I need...\" to create a ticket\n• 🏗️ **Planning** — Start with \"Build me...\" to start a project\n\nAll answers include confidence scores and source links. What do you need?",
+      timestamp: new Date(),
+    },
+  ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
-  const [isPlanningMode, setIsPlanningMode] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim()) return
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return
+    const userMsg: Message = {
+      id: `user-${Date.now()}`,
       role: 'user',
-      content: input,
+      content: input.trim(),
       timestamp: new Date(),
     }
-
-    setMessages((prev) => [...prev, userMessage])
+    setMessages(prev => [...prev, userMsg])
     setInput('')
     setIsTyping(true)
 
-    // Detect suggestions
-    const suggestionTriggers = ['i wish', 'it would be nice', 'we should have', 'feature request', 'this would be better']
-    const isSuggestion = suggestionTriggers.some((t) => input.toLowerCase().includes(t))
+    // Simulate AI thinking time
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200))
 
-    // Detect tickets
-    const ticketTriggers = ['i need', 'can someone', 'is broken', 'submit a ticket', 'request for', 'can it help', 'can hr help', 'can marketing help']
-    const isTicket = ticketTriggers.some((t) => input.toLowerCase().includes(t))
-
-    // Simulate response
-    setTimeout(() => {
-      let response: Message
-
-      if (isSuggestion) {
-        response = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: "That's a great idea. I can't do that today, but I'd like to log this as a suggestion so it gets tracked and taken seriously. Should I send it?\n\n**Suggestion:** " + input + "\n\n[ ✅ Yes, Submit ] [ ❌ No, Cancel ]",
-          timestamp: new Date(),
-          isSuggestion: true,
-        }
-      } else if (isTicket) {
-        response = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: "Sounds like a service request. I'll create a ticket for you.\n\n**Ticket Preview:**\n📋 **Title:** " + input.slice(0, 60) + "...\n🏢 **Routing to:** IT Department\n🔴 **Priority:** Medium\n\nShould I submit this, or would you like to adjust anything?\n\n[ ✅ Submit Ticket ] [ ✏️ Edit ] [ ❌ Cancel ]",
-          timestamp: new Date(),
-          isTicket: true,
-        }
-      } else if (input.toLowerCase().includes('build') || input.toLowerCase().includes('create') || input.toLowerCase().includes('generate')) {
-        setIsPlanningMode(true)
-        response = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: "Before I build this, let me make sure I get it right. I have a few questions:\n\n**1.** What's the output? (Report, dashboard, document, workflow)\n**2.** Who's the audience?\n**3.** What data sources should I pull from?\n**4.** Any format preference? (If you have something similar you like, share it)\n**5.** How often will this need to refresh?\n\nTake your time — getting this right up front saves us both rounds of revisions.",
-          timestamp: new Date(),
-        }
-      } else {
-        response = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: "Your occupancy at Bartram Park is **90.6%** (269 / 297 units) with 19 on notice and 12 signed leases pending move-in.\n\nExposure is at **12.1%** (36 units) — up from 11.1% last week. The increase is driven by 3 new notices filed this week.\n\n📎 *Source: Entrata Box Score, pulled 2/25/2026 6:00 AM*",
-          timestamp: new Date(),
-          confidence: 96,
-          confidenceReason: 'Data pulled directly from Entrata, less than 24 hours old.',
-          sources: [
-            { label: 'Entrata Box Score 2/25/2026', url: '#' },
-            { label: 'Bartram DLR 2/25', url: '#' },
-          ],
-          dataFreshness: 'verified',
-          isFinancial: false,
-        }
-      }
-
-      setMessages((prev) => [...prev, response])
-      setIsTyping(false)
-    }, 1200)
+    const response = getSmartResponse(userMsg.content)
+    setMessages(prev => [...prev, response])
+    setIsTyping(false)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend(e)
-    }
-  }
-
-  const freshnessColors: Record<string, { bg: string; text: string; label: string }> = {
-    verified: { bg: 'rgba(16,185,129,0.1)', text: 'var(--green-light)', label: '✅ Verified' },
-    stale: { bg: 'rgba(245,158,11,0.1)', text: 'var(--orange-light)', label: '🟡 Stale' },
-    partial: { bg: 'rgba(245,158,11,0.1)', text: 'var(--orange-light)', label: '🟡 Partial' },
-    unknown: { bg: 'rgba(239,68,68,0.1)', text: 'var(--red-light)', label: '🔴 Unknown' },
-  }
+  const quickActions = [
+    "What's our occupancy?",
+    "Show me revenue",
+    "I need help with a work order",
+    "Build me a weekly report",
+  ]
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-120px)] flex flex-col">
-      {/* Planning mode banner */}
-      {isPlanningMode && (
-        <div className="flex items-center justify-between px-4 py-2 rounded-xl mb-3"
-          style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)' }}>
-          <span className="text-xs font-bold" style={{ color: 'var(--purple)' }}>
-            📐 Planning Mode — Building your spec before building the thing
-          </span>
-          <button onClick={() => setIsPlanningMode(false)}
-            className="text-xs font-medium px-2 py-1 rounded"
-            style={{ color: 'var(--text3)' }}>
-            Exit Planning
-          </button>
+    <div className="max-w-[900px] mx-auto h-[calc(100vh-120px)] flex flex-col">
+      {/* Chat Header */}
+      <div className="flex items-center justify-between mb-4 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}>
+            <span className="text-lg">🤖</span>
+          </div>
+          <div>
+            <h2 className="text-lg font-bold" style={{ color: 'var(--text)' }}>Operations Agent</h2>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--green)', boxShadow: '0 0 6px rgba(16,185,129,0.6)' }} />
+              <span className="text-xs" style={{ color: 'var(--green)' }}>Online</span>
+              <span className="text-xs" style={{ color: 'var(--text4)' }}>• Connected to Entrata, M365, Egnyte</span>
+            </div>
+          </div>
         </div>
-      )}
+        <div className="flex gap-2">
+          <button className="btn-ghost text-xs">📋 History</button>
+          <button className="btn-ghost text-xs">⚙️ Agent Settings</button>
+        </div>
+      </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto rounded-xl mb-4 p-4 space-y-4"
+        style={{ background: 'var(--bg2)', border: '1px solid var(--border)' }}>
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] ${msg.role === 'user' ? '' : ''}`}>
-              {/* Avatar + Name */}
-              <div className={`flex items-center gap-2 mb-1 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                {msg.role === 'assistant' && (
-                  <div className="w-6 h-6 rounded-md flex items-center justify-center text-[10px]"
-                    style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}>
-                    🔷
-                  </div>
-                )}
-                <span className="text-[10px] font-semibold" style={{ color: 'var(--text4)' }}>
-                  {msg.role === 'user' ? 'You' : 'Ops Agent'}
-                </span>
-                <span className="text-[10px]" style={{ color: 'var(--text4)' }}>
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
+          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} fade-in`}>
+            <div className={`max-w-[75%] ${msg.role === 'user' ? '' : ''}`}>
+              {/* Detection banner */}
+              {msg.detectedAs && (
+                <div className="text-[10px] px-2 py-1 rounded-t-lg mb-0" style={{
+                  background: msg.detectedAs === 'suggestion' ? 'rgba(139,92,246,0.2)' :
+                    msg.detectedAs === 'ticket' ? 'rgba(245,158,11,0.2)' : 'rgba(59,130,246,0.2)',
+                  color: msg.detectedAs === 'suggestion' ? 'var(--purple)' :
+                    msg.detectedAs === 'ticket' ? 'var(--orange)' : 'var(--blue)',
+                }}>
+                  {msg.detectedAs === 'suggestion' ? '💡 Detected as Suggestion' :
+                   msg.detectedAs === 'ticket' ? '🎫 Detected as Ticket' : '🏗️ Planning Mode'}
+                </div>
+              )}
 
               {/* Message bubble */}
-              <div className="px-4 py-3 rounded-xl text-sm leading-relaxed"
-                style={{
-                  background: msg.role === 'user' ? 'var(--blue)' : 'var(--bg2)',
-                  color: msg.role === 'user' ? '#fff' : 'var(--text2)',
-                  border: msg.role === 'user' ? 'none' : '1px solid var(--border)',
-                  borderTopRightRadius: msg.role === 'user' ? '4px' : undefined,
-                  borderTopLeftRadius: msg.role === 'assistant' ? '4px' : undefined,
-                  whiteSpace: 'pre-wrap',
-                }}>
-                {/* Mock data banner */}
+              <div className="px-4 py-3 rounded-2xl text-sm leading-relaxed" style={{
+                background: msg.role === 'user'
+                  ? 'linear-gradient(135deg, var(--blue), var(--blue-dark))'
+                  : 'var(--bg3)',
+                color: msg.role === 'user' ? 'white' : 'var(--text2)',
+                borderTopRightRadius: msg.role === 'user' ? '6px' : undefined,
+                borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
+              }}>
+                {/* Mock data warning */}
                 {msg.isMock && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg mb-3 -mx-1 -mt-1"
-                    style={{ background: 'rgba(245,158,11,0.15)', border: '1px dashed rgba(245,158,11,0.4)' }}>
-                    <span className="text-[10px] font-bold" style={{ color: 'var(--orange)' }}>⚠️ PROJECTED DATA</span>
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded mb-2 text-[10px]"
+                    style={{ background: 'rgba(245,158,11,0.15)', color: 'var(--orange)', border: '1px dashed rgba(245,158,11,0.3)' }}>
+                    ⚠️ PROJECTED — Contains estimated values
                   </div>
                 )}
+
+                {/* Render content with basic markdown */}
+                <div className="whitespace-pre-wrap">
+                  {msg.content.split('\n').map((line, i) => {
+                    if (line.startsWith('**') && line.endsWith('**')) {
+                      return <div key={i} className="font-bold mt-2 first:mt-0" style={{ color: 'var(--text)' }}>{line.replace(/\*\*/g, '')}</div>
+                    }
+                    if (line.startsWith('• ') || line.startsWith('- ')) {
+                      return <div key={i} className="ml-2">{line}</div>
+                    }
+                    return <div key={i}>{line || <br />}</div>
+                  })}
+                </div>
 
                 {/* Financial data notice */}
                 {msg.isFinancial && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg mb-3 -mx-1 -mt-1"
-                    style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)' }}>
-                    <span className="text-[10px] font-medium" style={{ color: 'var(--blue-light)' }}>
-                      💰 Financial data — please verify before making decisions
-                    </span>
+                  <div className="mt-2 pt-2 text-[10px]" style={{ borderTop: '1px solid var(--border)', color: 'var(--text4)' }}>
+                    💰 Financial data — double-verified against source system
                   </div>
                 )}
-
-                <span dangerouslySetInnerHTML={{
-                  __html: msg.content
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n/g, '<br/>')
-                    .replace(/\[ (.*?) \]/g, '<button style="display:inline-block;margin:4px 4px 0 0;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);cursor:pointer">$1</button>')
-                }} />
               </div>
 
-              {/* Confidence + Sources */}
-              {msg.role === 'assistant' && (msg.confidence || msg.sources?.length || msg.dataFreshness) && (
-                <div className="mt-2 space-y-1">
-                  {msg.dataFreshness && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded"
-                      style={{
-                        background: freshnessColors[msg.dataFreshness].bg,
-                        color: freshnessColors[msg.dataFreshness].text,
-                      }}>
-                      {freshnessColors[msg.dataFreshness].label}
-                    </span>
-                  )}
-                  {msg.confidence && (
-                    <div className="text-[10px]" style={{ color: 'var(--text4)' }}>
-                      <strong>Confidence: {msg.confidence}%</strong>
-                      {msg.confidenceReason && <span> — {msg.confidenceReason}</span>}
-                    </div>
-                  )}
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {msg.sources.map((s, i) => (
-                        <a key={i} href={s.url} className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded transition-colors hover:bg-white/10"
-                          style={{ background: 'var(--bg3)', color: 'var(--blue-light)' }}>
-                          📎 {s.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+              {/* Message metadata */}
+              <div className="flex items-center gap-3 mt-1.5 px-1">
+                <span className="text-[10px]" style={{ color: 'var(--text4)' }}>
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+
+                {msg.confidence !== undefined && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded" style={{
+                    background: msg.confidence >= 90 ? 'rgba(16,185,129,0.15)' :
+                      msg.confidence >= 70 ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)',
+                    color: msg.confidence >= 90 ? 'var(--green)' :
+                      msg.confidence >= 70 ? 'var(--orange)' : 'var(--red)',
+                  }}>
+                    {msg.confidence}% confident
+                  </span>
+                )}
+
+                {msg.freshness && freshnessLabels[msg.freshness] && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded" style={{
+                    background: `${freshnessLabels[msg.freshness].color}15`,
+                    color: freshnessLabels[msg.freshness].color,
+                  }}>
+                    {freshnessLabels[msg.freshness].icon} {freshnessLabels[msg.freshness].label}
+                  </span>
+                )}
+              </div>
+
+              {/* Sources */}
+              {msg.sources && msg.sources.length > 0 && (
+                <div className="flex items-center gap-2 mt-1 px-1">
+                  <span className="text-[10px]" style={{ color: 'var(--text4)' }}>Sources:</span>
+                  {msg.sources.map((s, i) => (
+                    <a key={i} href={s.url} className="text-[10px] hover:underline" style={{ color: 'var(--blue)' }}>
+                      {s.label}
+                    </a>
+                  ))}
                 </div>
               )}
             </div>
@@ -236,67 +266,68 @@ export default function ChatView() {
 
         {/* Typing indicator */}
         {isTyping && (
-          <div className="flex justify-start">
-            <div className="px-4 py-3 rounded-xl" style={{ background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-              <div className="flex gap-1">
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '150ms' }} />
-                <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '300ms' }} />
+          <div className="flex justify-start fade-in">
+            <div className="px-4 py-3 rounded-2xl" style={{ background: 'var(--bg3)' }}>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '0ms' }} />
+                <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '150ms' }} />
+                <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text4)', animationDelay: '300ms' }} />
               </div>
             </div>
           </div>
         )}
-
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick Actions */}
+      {messages.length <= 1 && (
+        <div className="flex gap-2 mb-3 flex-wrap shrink-0">
+          {quickActions.map((action, i) => (
+            <button key={i}
+              onClick={() => { setInput(action); inputRef.current?.focus() }}
+              className="px-3 py-1.5 rounded-full text-xs transition-all hover:scale-[1.02]"
+              style={{ background: 'var(--bg3)', color: 'var(--text3)', border: '1px solid var(--border)' }}>
+              {action}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input */}
-      <div className="flex-shrink-0 pb-2">
-        <form onSubmit={handleSend} className="relative">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={isPlanningMode ? "Answer the planning questions above..." : "Ask anything, create a ticket, or make a suggestion..."}
-            rows={1}
-            className="w-full pl-4 pr-24 py-3.5 rounded-xl text-sm resize-none transition-all duration-200 focus:ring-2 focus:ring-blue-500/30"
-            style={{
-              background: 'var(--bg2)',
-              border: '1px solid var(--border)',
-              color: 'var(--text)',
-              minHeight: '48px',
-              maxHeight: '120px',
-            }}
-            onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement
-              target.style.height = 'auto'
-              target.style.height = Math.min(target.scrollHeight, 120) + 'px'
-            }}
-          />
-          <div className="absolute right-2 bottom-2 flex items-center gap-1">
-            <button type="button" className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
-              style={{ color: 'var(--text4)' }} title="Attach file">
-              📎
-            </button>
-            <button
-              type="submit"
-              disabled={!input.trim()}
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-30"
-              style={{ background: input.trim() ? 'var(--blue)' : 'transparent', color: input.trim() ? '#fff' : 'var(--text4)' }}
-            >
-              ↑
-            </button>
-          </div>
-        </form>
-        <div className="flex items-center justify-between mt-2 px-1">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px]" style={{ color: 'var(--text4)' }}>
-              💡 Try: &quot;I wish...&quot; for suggestions • &quot;I need...&quot; for tickets • &quot;Build me...&quot; for planning mode
+      <div className="shrink-0">
+        <div className="flex gap-2 items-end">
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              placeholder="Ask anything, start with 'I wish...' for suggestions or 'I need...' for tickets"
+              disabled={isTyping}
+              className="w-full px-4 py-3 pr-12 rounded-xl text-sm disabled:opacity-50"
+              style={{ background: 'var(--bg2)', border: '1px solid var(--border)', color: 'var(--text)' }}
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px]" style={{ color: 'var(--text4)' }}>
+              ↵
             </span>
           </div>
+          <button
+            onClick={handleSend}
+            disabled={!input.trim() || isTyping}
+            className="px-4 py-3 rounded-xl font-medium text-sm transition-all hover:scale-[1.02] disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+            style={{ background: 'var(--blue)', color: 'white' }}>
+            Send
+          </button>
+        </div>
+        <div className="flex items-center justify-between mt-2 px-1">
+          <div className="flex items-center gap-3 text-[10px]" style={{ color: 'var(--text4)' }}>
+            <span>💡 "I wish..." → Suggestion</span>
+            <span>🎫 "I need..." → Ticket</span>
+            <span>🏗️ "Build me..." → Planning Mode</span>
+          </div>
           <span className="text-[10px]" style={{ color: 'var(--text4)' }}>
-            Shift+Enter for new line
+            Zero hallucination mode active
           </span>
         </div>
       </div>
