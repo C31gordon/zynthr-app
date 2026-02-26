@@ -1,16 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-
-const tickets = [
-  { id: 'TKT-0012', title: 'Laptop running slow, need RAM upgrade', requester: 'Chris Jackson', dept: 'Maintenance', targetDept: 'IT', status: 'new' as const, priority: 'medium' as const, created: '12 min ago', group: null },
-  { id: 'TKT-0011', title: 'VPN disconnects every 30 minutes', requester: 'Mona Vogele', dept: 'Training', targetDept: 'IT', status: 'assigned' as const, priority: 'high' as const, created: '2 hours ago', group: 'vpn-issues' },
-  { id: 'TKT-0010', title: 'VPN keeps dropping during training sessions', requester: 'Sarah Kim', dept: 'Training', targetDept: 'IT', status: 'in_progress' as const, priority: 'high' as const, created: '3 hours ago', group: 'vpn-issues' },
-  { id: 'TKT-0009', title: 'Need access to Marketing shared drive', requester: 'Jessica Lee', dept: 'Operations', targetDept: 'IT', status: 'waiting_on_requester' as const, priority: 'low' as const, created: '1 day ago', group: null },
-  { id: 'TKT-0008', title: 'Update property photos on website', requester: 'David Park', dept: 'Operations', targetDept: 'Marketing', status: 'in_progress' as const, priority: 'medium' as const, created: '2 days ago', group: null },
-  { id: 'TKT-0007', title: 'PTO policy clarification', requester: 'Mike Torres', dept: 'Maintenance', targetDept: 'HR', status: 'resolved' as const, priority: 'low' as const, created: '3 days ago', group: null },
-  { id: 'TKT-0006', title: 'HVAC vendor contract renewal', requester: 'Chris Jackson', dept: 'Maintenance', targetDept: 'Operations', status: 'in_progress' as const, priority: 'urgent' as const, created: '4 days ago', group: null },
-] as const
+import { useState, useEffect } from 'react'
+import { getTickets } from '@/lib/data'
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
   new: { label: 'New', bg: 'rgba(59,130,246,0.15)', color: 'var(--blue-light)' },
@@ -28,11 +19,43 @@ const priorityConfig: Record<string, { label: string; color: string }> = {
   urgent: { label: 'Urgent', color: 'var(--red)' },
 }
 
+interface TicketRow {
+  id: string
+  ticket_number: number
+  title: string
+  status: string
+  priority: string
+  category: string | null
+  created_at: string
+  requester?: { full_name: string } | null
+  target_department?: { name: string } | null
+}
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins} min ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
+}
+
 export default function TicketsView() {
   const [filter, setFilter] = useState<string>('all')
+  const [tickets, setTickets] = useState<TicketRow[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getTickets().then((data) => { setTickets(data as TicketRow[]); setLoading(false) })
+  }, [])
 
   const filtered = filter === 'all' ? tickets : tickets.filter((t) => t.status === filter)
-  const grouped = tickets.filter((t) => t.group === 'vpn-issues')
+  const openCount = tickets.filter((t) => !['resolved', 'closed'].includes(t.status)).length
+
+  if (loading) {
+    return <div className="w-full mx-auto flex items-center justify-center py-20"><p className="text-sm animate-pulse" style={{ color: 'var(--text3)' }}>Loading tickets...</p></div>
+  }
 
   return (
     <div className="w-full mx-auto space-y-6">
@@ -40,32 +63,10 @@ export default function TicketsView() {
         <div>
           <h1 className="text-xl font-bold" style={{ color: 'var(--text)' }}>Tickets</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text3)' }}>
-            {tickets.length} total • {tickets.filter((t) => (t.status as string) !== 'resolved' && (t.status as string) !== 'closed').length} open
+            {tickets.length} total • {openCount} open
           </p>
         </div>
       </div>
-
-      {/* Bubbled group alert */}
-      {grouped.length >= 2 && (
-        <div className="glass-card p-4 flex items-center justify-between"
-          style={{ borderColor: 'rgba(245,158,11,0.4)', background: 'rgba(245,158,11,0.05)' }}>
-          <div className="flex items-center gap-3">
-            <span className="text-lg">⚠️</span>
-            <div>
-              <div className="text-sm font-bold" style={{ color: 'var(--orange-light)' }}>
-                Pattern Detected: {grouped.length} VPN-related tickets in 24 hours
-              </div>
-              <div className="text-xs" style={{ color: 'var(--text3)' }}>
-                Multiple users reporting VPN issues. This may be a systemic problem.
-              </div>
-            </div>
-          </div>
-          <button className="px-3 py-1.5 rounded-lg text-xs font-bold"
-            style={{ background: 'var(--orange)', color: '#000' }}>
-            Escalate to IT Lead
-          </button>
-        </div>
-      )}
 
       {/* Filters */}
       <div className="flex items-center gap-2">
@@ -97,28 +98,30 @@ export default function TicketsView() {
             {filtered.map((ticket) => (
               <tr key={ticket.id} className="transition-colors hover:bg-white/5 cursor-pointer"
                 style={{ borderBottom: '1px solid var(--border)' }}>
-                <td className="px-4 py-3 text-xs font-mono font-bold whitespace-nowrap" style={{ color: 'var(--blue-light)' }}>{ticket.id}</td>
-                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'var(--text)' }}>
-                  {ticket.title}
-                  {ticket.group && (
-                    <span className="ml-2 text-[11px] font-bold whitespace-nowrap px-2 py-0.5 rounded"
-                      style={{ background: 'rgba(245,158,11,0.2)', color: 'var(--orange)' }}>GROUPED</span>
-                  )}
+                <td className="px-4 py-3 text-xs font-mono font-bold whitespace-nowrap" style={{ color: 'var(--blue-light)' }}>
+                  TKT-{String(ticket.ticket_number).padStart(4, '0')}
                 </td>
-                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text3)' }}>{ticket.requester}</td>
-                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text3)' }}>{ticket.targetDept}</td>
+                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'var(--text)' }}>{ticket.title}</td>
+                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text3)' }}>
+                  {ticket.requester?.full_name || 'Unknown'}
+                </td>
+                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text3)' }}>
+                  {ticket.target_department?.name || '—'}
+                </td>
                 <td className="px-4 py-3">
-                  <span className="text-xs font-bold" style={{ color: priorityConfig[ticket.priority].color }}>
-                    {ticket.priority === 'urgent' ? '🔴 ' : ''}{priorityConfig[ticket.priority].label}
+                  <span className="text-xs font-bold" style={{ color: priorityConfig[ticket.priority]?.color || 'var(--text3)' }}>
+                    {ticket.priority === 'urgent' ? '🔴 ' : ''}{priorityConfig[ticket.priority]?.label || ticket.priority}
                   </span>
                 </td>
                 <td className="px-4 py-3">
                   <span className="text-[11px] font-semibold whitespace-nowrap px-2.5 py-1 rounded-full"
-                    style={{ background: statusConfig[ticket.status].bg, color: statusConfig[ticket.status].color }}>
-                    {statusConfig[ticket.status].label}
+                    style={{ background: statusConfig[ticket.status]?.bg || 'var(--bg3)', color: statusConfig[ticket.status]?.color || 'var(--text3)' }}>
+                    {statusConfig[ticket.status]?.label || ticket.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text4)' }}>{ticket.created}</td>
+                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text4)' }}>
+                  {getTimeAgo(ticket.created_at)}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -142,7 +142,7 @@ export interface Notification {
 }
 
 // Demo mode flag
-export const DEMO_MODE = true
+export const DEMO_MODE = false
 
 // Demo user for unauthenticated browsing
 export const DEMO_USER = {

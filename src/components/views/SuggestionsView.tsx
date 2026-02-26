@@ -1,13 +1,7 @@
 'use client'
 
-const suggestions = [
-  { id: 'SUG-0015', title: 'Add competitor rent comps next to our own', submitter: 'Chris Jackson', dept: 'Maintenance', votes: 4, status: 'under_review' as const, created: '2 hours ago' },
-  { id: 'SUG-0014', title: 'Auto-generate move-in checklists from unit type', submitter: 'Sarah Kim', dept: 'Training', votes: 7, status: 'planned' as const, created: '1 day ago' },
-  { id: 'SUG-0013', title: 'Push notifications for urgent work orders', submitter: 'Chris Jackson', dept: 'Maintenance', votes: 12, status: 'building' as const, created: '3 days ago' },
-  { id: 'SUG-0012', title: 'Weekly summary email of all bot activity', submitter: 'Mona Vogele', dept: 'Training', votes: 3, status: 'new' as const, created: '4 days ago' },
-  { id: 'SUG-0011', title: 'Dark mode toggle for the dashboard', submitter: 'David Park', dept: 'Operations', votes: 1, status: 'declined' as const, created: '5 days ago' },
-  { id: 'SUG-0010', title: 'Voice input for chat interface', submitter: 'Chris Jackson', dept: 'Maintenance', votes: 9, status: 'shipped' as const, created: '1 week ago' },
-]
+import { useState, useEffect } from 'react'
+import { getSuggestions } from '@/lib/data'
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
   new: { label: 'New', bg: 'rgba(59,130,246,0.15)', color: 'var(--blue-light)' },
@@ -18,7 +12,39 @@ const statusConfig: Record<string, { label: string; bg: string; color: string }>
   declined: { label: 'Declined', bg: 'rgba(100,116,139,0.15)', color: 'var(--text4)' },
 }
 
+interface SuggestionRow {
+  id: string
+  suggestion_number: number
+  title: string
+  description: string
+  status: string
+  vote_count: number
+  created_at: string
+  submitter?: { full_name: string } | null
+}
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins} min ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
+}
+
 export default function SuggestionsView() {
+  const [suggestions, setSuggestions] = useState<SuggestionRow[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getSuggestions().then((data) => { setSuggestions(data as SuggestionRow[]); setLoading(false) })
+  }, [])
+
+  if (loading) {
+    return <div className="w-full mx-auto flex items-center justify-center py-20"><p className="text-sm animate-pulse" style={{ color: 'var(--text3)' }}>Loading suggestions...</p></div>
+  }
+
   return (
     <div className="w-full mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -31,30 +57,29 @@ export default function SuggestionsView() {
       </div>
 
       <div className="space-y-3">
-        {suggestions.sort((a, b) => b.votes - a.votes).map((s) => (
+        {suggestions.map((s) => (
           <div key={s.id} className="glass-card p-4 flex items-center gap-4 cursor-pointer">
-            {/* Vote count */}
             <div className="flex flex-col items-center gap-1 px-3 min-w-[60px]">
               <button className="text-xs" style={{ color: 'var(--text4)' }}>▲</button>
-              <span className="text-lg font-extrabold" style={{ color: s.votes >= 5 ? 'var(--blue)' : 'var(--text3)' }}>
-                {s.votes}
+              <span className="text-lg font-extrabold" style={{ color: s.vote_count >= 5 ? 'var(--blue)' : 'var(--text3)' }}>
+                {s.vote_count}
               </span>
               <span className="text-[11px]" style={{ color: 'var(--text4)' }}>votes</span>
             </div>
-
-            {/* Content */}
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono font-bold" style={{ color: 'var(--text4)' }}>{s.id}</span>
+                <span className="text-xs font-mono font-bold" style={{ color: 'var(--text4)' }}>
+                  SUG-{String(s.suggestion_number).padStart(4, '0')}
+                </span>
                 <span className="text-[11px] font-semibold whitespace-nowrap px-2.5 py-1 rounded-full"
-                  style={{ background: statusConfig[s.status].bg, color: statusConfig[s.status].color }}>
-                  {statusConfig[s.status].label}
+                  style={{ background: statusConfig[s.status]?.bg || 'var(--bg3)', color: statusConfig[s.status]?.color || 'var(--text3)' }}>
+                  {statusConfig[s.status]?.label || s.status}
                 </span>
               </div>
               <h3 className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--text)' }}>{s.title}</h3>
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-xs" style={{ color: 'var(--text4)' }}>{s.submitter} • {s.dept}</span>
-                <span className="text-xs" style={{ color: 'var(--text4)' }}>{s.created}</span>
+                <span className="text-xs" style={{ color: 'var(--text4)' }}>{s.submitter?.full_name || 'Anonymous'}</span>
+                <span className="text-xs" style={{ color: 'var(--text4)' }}>{getTimeAgo(s.created_at)}</span>
               </div>
             </div>
           </div>

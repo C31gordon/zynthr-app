@@ -1,39 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-const statusCards = [
-  { label: 'Active Agents', value: '3', sub: 'Ops • Training • Maintenance', color: 'var(--blue)', icon: '🤖', trend: '+2 this week', trendUp: true },
-  { label: 'Support Bots', value: '12', sub: '10 active, 2 configuring', color: 'var(--green)', icon: '⚙️', trend: '3 new today', trendUp: true },
-  { label: 'Open Tickets', value: '7', sub: '2 urgent, 3 high, 2 medium', color: 'var(--orange)', icon: '🎫', trend: '↓ 12% from last week', trendUp: false },
-  { label: 'Suggestions', value: '15', sub: '4 under review, 2 planned', color: 'var(--purple)', icon: '💡', trend: '3 new this week', trendUp: true },
-]
-
-const recentActivity = [
-  { icon: '🤖', text: 'Ops Agent completed DLR generation for Bartram Park', time: '5 min ago', type: 'agent' },
-  { icon: '🎫', text: 'Ticket #TKT-0012 created: "Laptop running slow" → IT', time: '12 min ago', type: 'ticket' },
-  { icon: '🔒', text: 'Access exception approved: Marketing → Ops SOPs (30 days)', time: '45 min ago', type: 'security' },
-  { icon: '💡', text: 'Suggestion #SUG-0015: "Add competitor rent comps" — 4 votes', time: '2 hours ago', type: 'suggestion' },
-  { icon: '⚡', text: 'Workflow "Email Cleanup" ran successfully — 8 items processed', time: '3 hours ago', type: 'workflow' },
-  { icon: '🛡️', text: 'Prompt injection attempt blocked — user: jsmith@risere.com', time: '4 hours ago', type: 'security' },
-  { icon: '✅', text: 'Maintenance Bot resolved work order #WO-4421 (HVAC repair)', time: '5 hours ago', type: 'agent' },
-]
-
-const departmentHealth = [
-  { name: 'Operations', icon: '🏢', agents: 1, bots: 4, status: 'active' as const, memoryUsed: '2.4 GB', tickets: 2, health: 96 },
-  { name: 'Training', icon: '📚', agents: 1, bots: 3, status: 'active' as const, memoryUsed: '1.1 GB', tickets: 1, health: 92 },
-  { name: 'Maintenance', icon: '🔧', agents: 1, bots: 3, status: 'active' as const, memoryUsed: '0.8 GB', tickets: 3, health: 88 },
-  { name: 'HR', icon: '👥', agents: 0, bots: 0, status: 'pending' as const, memoryUsed: '—', tickets: 0, health: 0 },
-  { name: 'Marketing', icon: '📢', agents: 0, bots: 0, status: 'pending' as const, memoryUsed: '—', tickets: 1, health: 0 },
-  { name: 'Finance', icon: '💰', agents: 0, bots: 0, status: 'pending' as const, memoryUsed: '—', tickets: 0, health: 0 },
-  { name: 'IT', icon: '💻', agents: 0, bots: 0, status: 'pending' as const, memoryUsed: '—', tickets: 0, health: 0 },
-]
-
-const securityAlerts = [
-  { level: 'critical' as const, text: '3 prompt injection attempts from jsmith@risere.com in 24 hours', action: 'Investigate', icon: '🔴' },
-  { level: 'warning' as const, text: 'Access exception for Marketing → Ops expires in 7 days', action: 'Review', icon: '🟡' },
-  { level: 'info' as const, text: 'Weekly security audit completed — no issues found', action: 'View', icon: '🟢' },
-]
+import { getAgents, getBots, getTickets, getSuggestions, getDepartments, getAuditLog } from '@/lib/data'
 
 function getGreeting(): string {
   const hour = new Date().getHours()
@@ -44,14 +12,87 @@ function getGreeting(): string {
   return 'Working late'
 }
 
+const actionLabels: Record<string, { icon: string; label: string }> = {
+  login: { icon: '🔑', label: 'logged in' },
+  agent_created: { icon: '🤖', label: 'deployed agent' },
+  workflow_triggered: { icon: '⚡', label: 'workflow triggered' },
+  bot_updated: { icon: '⚙️', label: 'updated bot' },
+  prompt_injection_detected: { icon: '🛡️', label: 'Prompt injection blocked' },
+  policy_updated: { icon: '🔒', label: 'updated policy' },
+  ticket_resolved: { icon: '✅', label: 'ticket resolved' },
+  exception_requested: { icon: '⚠️', label: 'exception requested' },
+  export_data: { icon: '💾', label: 'data exported' },
+}
+
+const deptIcons: Record<string, string> = {
+  Operations: '🏢', Marketing: '📢', 'Human Resources': '👥', Finance: '💰',
+  IT: '💻', Training: '📚', Maintenance: '🔧',
+}
+
 export default function DashboardView() {
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month'>('today')
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [loading, setLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<{ agents: any[]; bots: any[]; tickets: any[]; suggestions: any[]; departments: any[]; audit: any[] }>({
+    agents: [], bots: [], tickets: [], suggestions: [], departments: [], audit: [],
+  })
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000)
     return () => clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    Promise.all([getAgents(), getBots(), getTickets(), getSuggestions(), getDepartments(), getAuditLog(10)])
+      .then(([agents, bots, tickets, suggestions, departments, audit]) => {
+        setData({ agents, bots, tickets, suggestions, departments, audit })
+        setLoading(false)
+      })
+  }, [])
+
+  const openTickets = data.tickets.filter((t: { status: string }) => !['resolved', 'closed'].includes(t.status))
+  const urgentCount = openTickets.filter((t: { priority: string }) => t.priority === 'urgent').length
+  const highCount = openTickets.filter((t: { priority: string }) => t.priority === 'high').length
+  const medCount = openTickets.filter((t: { priority: string }) => t.priority === 'medium').length
+
+  const statusCards = [
+    { label: 'Active Agents', value: String(data.agents.filter((a: { status: string }) => a.status === 'active').length), sub: data.agents.map((a: { name: string }) => a.name.replace(' Agent', '')).join(' • ') || 'None deployed', color: 'var(--blue)', icon: '🤖', trend: '', trendUp: true },
+    { label: 'Support Bots', value: String(data.bots.length), sub: `${data.bots.filter((b: { status: string }) => b.status === 'active').length} active`, color: 'var(--green)', icon: '⚙️', trend: '', trendUp: true },
+    { label: 'Open Tickets', value: String(openTickets.length), sub: `${urgentCount} urgent, ${highCount} high, ${medCount} medium`, color: 'var(--orange)', icon: '🎫', trend: '', trendUp: false },
+    { label: 'Suggestions', value: String(data.suggestions.length), sub: `${data.suggestions.filter((s: { status: string }) => s.status === 'under_review').length} under review`, color: 'var(--purple)', icon: '💡', trend: '', trendUp: true },
+  ]
+
+  // Build department health from real data
+  const departmentHealth = data.departments.map((dept: { id: string; name: string }) => {
+    const deptAgents = data.agents.filter((a: { department_id: string }) => a.department_id === dept.id)
+    const deptBots = data.bots.filter((b: { department_id: string }) => b.department_id === dept.id)
+    const deptTickets = data.tickets.filter((t: { target_department_id: string }) => t.target_department_id === dept.id)
+    const isActive = deptAgents.length > 0
+    return {
+      name: dept.name, icon: deptIcons[dept.name] || '📁', agents: deptAgents.length, bots: deptBots.length,
+      status: isActive ? 'active' as const : 'pending' as const,
+      tickets: deptTickets.filter((t: { status: string }) => !['resolved', 'closed'].includes(t.status)).length,
+      health: isActive ? Math.max(70, 100 - deptTickets.filter((t: { priority: string }) => t.priority === 'urgent').length * 10) : 0,
+    }
+  })
+
+  const securityAlerts = [
+    { level: 'critical' as const, text: '3 prompt injection attempts from jsmith@risere.com in 24 hours', action: 'Investigate', icon: '🔴' },
+    { level: 'warning' as const, text: 'Access exception for Marketing → Ops expires in 7 days', action: 'Review', icon: '🟡' },
+    { level: 'info' as const, text: 'Weekly security audit completed — no issues found', action: 'View', icon: '🟢' },
+  ]
+
+  if (loading) {
+    return (
+      <div className="w-full mx-auto flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="text-2xl mb-2 animate-pulse">🔷</div>
+          <p className="text-sm" style={{ color: 'var(--text3)' }}>Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full mx-auto space-y-6">
@@ -91,9 +132,6 @@ export default function DashboardView() {
             </div>
             <div className="text-3xl font-bold mb-1" style={{ color: card.color }}>{card.value}</div>
             <div className="text-xs mb-2" style={{ color: 'var(--text3)' }}>{card.sub}</div>
-            <div className="text-[11px] font-medium" style={{ color: card.trendUp ? 'var(--green)' : 'var(--orange)' }}>
-              {card.trend}
-            </div>
           </div>
         ))}
       </div>
@@ -106,15 +144,28 @@ export default function DashboardView() {
             <button className="text-xs" style={{ color: 'var(--blue)' }}>View All</button>
           </div>
           <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
-            {recentActivity.map((item, i) => (
-              <div key={i} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-white/[0.02]">
-                <span className="text-base mt-0.5">{item.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text2)' }}>{item.text}</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: 'var(--text4)' }}>{item.time}</p>
+            {data.audit.map((entry: { id: string; action: string; details: Record<string, unknown>; user?: { full_name: string } | null; created_at: string }, i: number) => {
+              const meta = actionLabels[entry.action] || { icon: '📋', label: entry.action.replace(/_/g, ' ') }
+              const actor = entry.user?.full_name || 'System'
+              const ago = getTimeAgo(entry.created_at)
+              return (
+                <div key={entry.id || i} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-white/[0.02]">
+                  <span className="text-base mt-0.5">{meta.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text2)' }}>
+                      {actor} — {meta.label}
+                      {entry.details && typeof entry.details === 'object' && Object.keys(entry.details).length > 0 && (
+                        <span style={{ color: 'var(--text4)' }}> ({Object.values(entry.details).slice(0, 2).join(', ')})</span>
+                      )}
+                    </p>
+                    <p className="text-[11px] mt-0.5" style={{ color: 'var(--text4)' }}>{ago}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
+            {data.audit.length === 0 && (
+              <div className="px-5 py-8 text-center text-sm" style={{ color: 'var(--text4)' }}>No recent activity</div>
+            )}
           </div>
         </div>
 
@@ -149,19 +200,21 @@ export default function DashboardView() {
       <div className="glass-card-static rounded-xl overflow-hidden">
         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
           <h3 className="text-sm font-bold" style={{ color: 'var(--text)' }}>Department Health</h3>
-          <span className="text-xs" style={{ color: 'var(--text4)' }}>3 of 7 departments active</span>
+          <span className="text-xs" style={{ color: 'var(--text4)' }}>
+            {departmentHealth.filter((d: { status: string }) => d.status === 'active').length} of {departmentHealth.length} departments active
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                {['Department', 'Status', 'Agents', 'Bots', 'Memory', 'Tickets', 'Health'].map(h => (
+                {['Department', 'Status', 'Agents', 'Bots', 'Open Tickets', 'Health'].map(h => (
                   <th key={h} className="text-left px-5 py-3 font-semibold whitespace-nowrap" style={{ color: 'var(--text4)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {departmentHealth.map((dept, i) => (
+              {departmentHealth.map((dept: { name: string; icon: string; agents: number; bots: number; status: 'active' | 'pending'; tickets: number; health: number }, i: number) => (
                 <tr key={i} className="transition-colors hover:bg-white/[0.02]" style={{ borderBottom: '1px solid var(--border)' }}>
                   <td className="px-5 py-3">
                     <span className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
@@ -181,7 +234,6 @@ export default function DashboardView() {
                   </td>
                   <td className="px-5 py-3" style={{ color: 'var(--text2)' }}>{dept.agents}</td>
                   <td className="px-5 py-3" style={{ color: 'var(--text2)' }}>{dept.bots}</td>
-                  <td className="px-5 py-3" style={{ color: 'var(--text2)' }}>{dept.memoryUsed}</td>
                   <td className="px-5 py-3" style={{ color: dept.tickets > 2 ? 'var(--orange)' : 'var(--text2)' }}>{dept.tickets}</td>
                   <td className="px-5 py-3">
                     {dept.health > 0 ? (
@@ -213,11 +265,7 @@ export default function DashboardView() {
             <span className="text-xs font-semibold" style={{ color: 'var(--text)' }}>RKBAC™ Status</span>
           </div>
           <div className="flex items-center gap-4 flex-wrap text-[11px]" style={{ color: 'var(--text3)' }}>
-            <span>6 active policies</span>
-            <span>•</span>
-            <span>3 active exceptions</span>
-            <span>•</span>
-            <span>1 pending approval</span>
+            <span>4 active policies</span>
             <span>•</span>
             <span style={{ color: 'var(--green)' }}>✅ All boundaries enforced</span>
           </div>
@@ -225,4 +273,15 @@ export default function DashboardView() {
       </div>
     </div>
   )
+}
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins} min ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
 }
