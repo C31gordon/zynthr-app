@@ -9,3 +9,4 @@ node_modules/
 # misc
 verify-schema.js
 *.tsbuildinfo
+.vercel

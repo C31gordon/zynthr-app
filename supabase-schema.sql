@@ -1,8 +1,9 @@
 -- ============================================================
 -- MILLIEBOT ARCHITECTURE — Full RKBAC Schema
 -- Supabase Project: Milliebot Architecture
--- Version: 1.0
--- Date: 2026-02-25
+-- Version: 1.1
+-- Date: 2026-02-26
+-- Changes: Added shared agents (Template + Instance pattern)
 -- ============================================================
 
 -- Enable required extensions

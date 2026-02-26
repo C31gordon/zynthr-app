@@ -59,6 +59,25 @@ Memory: Flows UP freely, DOWN with permission
 Access: Source system permissions = floor, RKBAC = ceiling
 ```
 
+### Shared Agents (Template + Instance Pattern)
+
+```
+Owner configures TEMPLATES (tenant-level)
+  ├── Research Agent ─────► Instance per department (RKBAC-scoped)
+  ├── Compliance Agent ──► Single interpretation, all departments query
+  ├── Security Agent ────► Owner + IT only
+  └── Reporting Agent ───► Standardized KPIs, all departments query
+
+Each instance:
+  • Inherits template config (prompt, model, capabilities)
+  • Has department-scoped memory partition
+  • Respects RKBAC for data access
+  • Can override settings per department need
+  • Auto-spawns on first query at scale
+```
+
+**Shared agents** (Research, Compliance, Security, Reporting) serve the whole org from tenant-level. **Department agents** handle specialized workflows (leasing, maintenance, HR onboarding). Owner configures once, departments benefit without setup.
+
 ## License
 
 Proprietary — Ardexa © 2026
