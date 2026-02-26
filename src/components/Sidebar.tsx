@@ -26,7 +26,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
 
   return (
     <div
-      className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 z-50 no-print"
+      className="h-screen flex flex-col transition-all duration-300 no-print"
       style={{
         width: collapsed ? '64px' : '240px',
         background: 'var(--bg2)',

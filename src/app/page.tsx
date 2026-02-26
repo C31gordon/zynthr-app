@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase, DEMO_MODE } from '@/lib/supabase'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import Sidebar from '@/components/Sidebar'
@@ -17,15 +17,32 @@ import SettingsView from '@/components/views/SettingsView'
 
 type ViewType = 'dashboard' | 'agents' | 'chat' | 'tickets' | 'suggestions' | 'workflows' | 'policies' | 'audit' | 'settings'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  return isMobile
+}
+
 export default function Home() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeView, setActiveView] = useState<ViewType>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const isMobile = useIsMobile()
+
+  const handleNavigate = useCallback((view: ViewType) => {
+    setActiveView(view)
+    if (isMobile) setMobileMenuOpen(false)
+  }, [isMobile])
 
   useEffect(() => {
     if (DEMO_MODE) {
-      // In demo mode, skip auth — show the full app
       setLoading(false)
       return
     }
@@ -85,18 +102,50 @@ export default function Home() {
     }
   }
 
+  const sidebarWidth = sidebarCollapsed ? '64px' : '240px'
+
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      <Sidebar
-        activeView={activeView}
-        onNavigate={setActiveView}
-        collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-      />
-      <div className="flex-1 flex flex-col min-h-screen transition-all duration-300"
-        style={{ marginLeft: sidebarCollapsed ? '64px' : '240px' }}>
-        <TopBar user={user} onNavigate={setActiveView} />
-        <main className="flex-1 p-6 overflow-y-auto">
+      {/* Mobile overlay backdrop */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-[55] bg-black/60 transition-opacity"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — fixed on desktop, slide-over on mobile */}
+      <div
+        className="transition-transform duration-300"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          zIndex: 60,
+          transform: isMobile && !mobileMenuOpen ? 'translateX(-100%)' : 'translateX(0)',
+        }}
+      >
+        <Sidebar
+          activeView={activeView}
+          onNavigate={handleNavigate}
+          collapsed={isMobile ? false : sidebarCollapsed}
+          onToggle={() => isMobile ? setMobileMenuOpen(false) : setSidebarCollapsed(!sidebarCollapsed)}
+        />
+      </div>
+
+      {/* Main content */}
+      <div
+        className="flex-1 flex flex-col min-h-screen transition-all duration-300"
+        style={{ marginLeft: isMobile ? 0 : sidebarWidth }}
+      >
+        <TopBar
+          user={user}
+          onNavigate={handleNavigate}
+          isMobile={isMobile}
+          onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+        />
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
           {renderView()}
         </main>
       </div>

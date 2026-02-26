@@ -9,9 +9,11 @@ type ViewType = 'dashboard' | 'agents' | 'chat' | 'tickets' | 'suggestions' | 'w
 interface TopBarProps {
   user: User | null
   onNavigate: (view: ViewType) => void
+  isMobile?: boolean
+  onMenuToggle?: () => void
 }
 
-export default function TopBar({ user, onNavigate }: TopBarProps) {
+export default function TopBar({ user, onNavigate, isMobile, onMenuToggle }: TopBarProps) {
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -52,8 +54,21 @@ export default function TopBar({ user, onNavigate }: TopBarProps) {
   const unreadCount = notifications.filter(n => n.unread).length
 
   return (
-    <div className="sticky top-0 z-40 flex items-center justify-between px-6 py-3 no-print"
+    <div className="sticky top-0 z-[60] flex items-center justify-between px-6 py-3 no-print"
       style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+
+      {/* Mobile hamburger */}
+      {isMobile && (
+        <button
+          onClick={onMenuToggle}
+          className="w-10 h-10 rounded-xl flex items-center justify-center mr-3 transition-colors hover:bg-white/10"
+          style={{ color: 'var(--text)' }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      )}
 
       {/* Search */}
       <form onSubmit={handleSearch} className="flex-1 max-w-xl">
