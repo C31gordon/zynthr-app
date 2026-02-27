@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  /* Milliebot Design System */
-  --bg: #0a0e1a;
-  --bg2: #111827;
-  --bg3: #1f2937;
-  --bg4: #374151;
-  --border: #374151;
-  --border-light: #4b5563;
-  --text: #f9fafb;
-  --text2: #d1d5db;
-  --text3: #9ca3af;
-  --text4: #6b7280;
-  --blue: #3b82f6;
-  --blue-light: #60a5fa;
-  --blue-dark: #2563eb;
-  --green: #10b981;
-  --green-light: #34d399;
-  --orange: #f59e0b;
-  --orange-light: #fbbf24;
-  --red: #ef4444;
-  --red-light: #f87171;
+  /* RISE Design System — Dark Mode (default) */
+  --bg: #001825;
+  --bg2: #002235;
+  --bg3: #003146;
+  --bg4: #004560;
+  --border: rgba(85,156,181,0.2);
+  --border-light: rgba(85,156,181,0.35);
+  --text: #f1f5f9;
+  --text2: #e2e8f0;
+  --text3: #94a3b8;
+  --text4: #64748b;
+  --blue: #559CB5;
+  --blue-light: #7ab5c9;
+  --blue-dark: #3d7a94;
+  --green: #6BA48A;
+  --green-light: #8bbda6;
+  --orange: #FCB53B;
+  --orange-light: #fdc764;
+  --red: #AE132A;
+  --red-light: rgba(174,19,42,0.15);
   --purple: #8b5cf6;
-  --teal: #14b8a6;
-  --gold: #f5a623;
-  --glass: rgba(17, 24, 39, 0.7);
-  --glass-border: rgba(75, 85, 99, 0.4);
+  --teal: #559CB5;
+  --gold: #FCB53B;
+  --glass: rgba(0, 34, 53, 0.7);
+  --glass-border: rgba(85,156,181,0.18);
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -33,13 +33,75 @@
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
-  --shadow-glow-blue: 0 0 20px rgba(59,130,246,0.3);
-  --shadow-glow-green: 0 0 20px rgba(16,185,129,0.3);
+  --shadow-glow-blue: 0 0 20px rgba(85,156,181,0.3);
+  --shadow-glow-green: 0 0 20px rgba(107,164,138,0.3);
   --transition-fast: 150ms ease;
   --transition-med: 250ms ease;
   --transition-slow: 400ms ease;
   --sidebar-width: 240px;
   --sidebar-collapsed: 64px;
+}
+
+/* Light Mode */
+html[data-theme="light"] {
+  --bg: #f8fafc;
+  --bg2: #f1f5f9;
+  --bg3: #e2e8f0;
+  --bg4: #cbd5e1;
+  --border: rgba(0,49,70,0.15);
+  --border-light: rgba(0,49,70,0.25);
+  --text: #003146;
+  --text2: #1e293b;
+  --text3: #475569;
+  --text4: #94a3b8;
+  --blue: #003146;
+  --blue-light: #004560;
+  --blue-dark: #002235;
+  --green: #6BA48A;
+  --green-light: #8bbda6;
+  --orange: #b45309;
+  --orange-light: #d97706;
+  --red: #AE132A;
+  --red-light: rgba(174,19,42,0.1);
+  --purple: #7c3aed;
+  --teal: #559CB5;
+  --gold: #FCB53B;
+  --glass: rgba(241, 245, 249, 0.8);
+  --glass-border: rgba(0,49,70,0.12);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-glow-blue: 0 0 20px rgba(0,49,70,0.15);
+  --shadow-glow-green: 0 0 20px rgba(107,164,138,0.2);
+}
+
+html[data-theme="light"] .glass-card,
+html[data-theme="light"] .glass-card-static {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-color: rgba(0,49,70,0.1);
+}
+
+html[data-theme="light"] .glass-card:hover {
+  border-color: rgba(0,49,70,0.2);
+}
+
+html[data-theme="light"] .shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+}
+
+html[data-theme="light"] ::selection {
+  background: rgba(0,49,70,0.2);
+  color: #003146;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 * {
@@ -49,7 +111,7 @@
 }
 
 html {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 14px;
@@ -61,6 +123,18 @@ html {
 body {
   min-height: 100vh;
   background: var(--bg);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Global text safety */
+p, span, div, td, th, li, a, label, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Flex children safety */
+.flex > *, [style*="display: flex"] > *, [style*="display:flex"] > * {
+  min-width: 0;
 }
 
 /* Glass morphism card */
@@ -78,7 +152,6 @@ body {
   box-shadow: var(--shadow-md);
 }
 
-/* Glass card that doesn't change on hover (for containers) */
 .glass-card-static {
   background: var(--glass);
   backdrop-filter: blur(16px);
@@ -112,8 +185,8 @@ body {
 
 /* Pulse glow */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(59,130,246,0.3); }
-  50% { box-shadow: 0 0 20px rgba(59,130,246,0.6); }
+  0%, 100% { box-shadow: 0 0 8px rgba(85,156,181,0.3); }
+  50% { box-shadow: 0 0 20px rgba(85,156,181,0.6); }
 }
 
 .pulse-glow {
@@ -158,9 +231,9 @@ body {
   flex-shrink: 0;
 }
 
-.status-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(16,185,129,0.6); }
+.status-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(107,164,138,0.6); }
 .status-dot.paused { background: var(--orange); }
-.status-dot.error { background: var(--red); box-shadow: 0 0 6px rgba(239,68,68,0.6); }
+.status-dot.error { background: var(--red); box-shadow: 0 0 6px rgba(174,19,42,0.6); }
 .status-dot.configuring { background: var(--blue); }
 
 /* Scrollbar */
@@ -178,30 +251,62 @@ body {
 
 /* Input consistent styling */
 input, textarea, select {
+  font-family: 'Inter', sans-serif;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 input:focus, textarea:focus, select:focus {
   border-color: var(--blue) !important;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  box-shadow: 0 0 0 3px rgba(85,156,181,0.15);
   outline: none;
 }
 
 /* Button base */
 .btn-primary {
-  background: var(--blue);
+  background: linear-gradient(135deg, var(--blue), var(--blue-dark));
   color: white;
   border: none;
   padding: 8px 16px;
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
+.btn-primary:hover { transform: scale(1.02); filter: brightness(1.1); }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-secondary {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover { transform: scale(1.02); border-color: var(--border-light); }
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-danger:hover { transform: scale(1.02); filter: brightness(1.1); }
 
 .btn-ghost {
   background: transparent;
@@ -211,11 +316,62 @@ input:focus, textarea:focus, select:focus {
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.btn-ghost:hover { background: var(--bg3); color: var(--text); border-color: var(--border-light); }
+.btn-ghost:hover { background: var(--bg3); color: var(--text); border-color: var(--border-light); transform: scale(1.02); }
+
+/* Badge base */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text4);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+
+table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+table tbody tr:hover {
+  background: rgba(85,156,181,0.05);
+}
+
+html[data-theme="light"] table tbody tr:hover {
+  background: rgba(0,49,70,0.04);
+}
 
 /* Tooltip */
 [data-tooltip] {
@@ -270,7 +426,6 @@ input:focus, textarea:focus, select:focus {
 
 /* Custom selection color */
 ::selection {
-  background: rgba(59,130,246,0.3);
+  background: rgba(85,156,181,0.3);
   color: white;
 }
-/* deploy trigger 1772125841 */

@@ -402,14 +402,14 @@ function BrandingSettings() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4 mt-4">
-          <InputField label="Primary Color" value="#3b82f6" />
+          <InputField label="Primary Color" value="#559CB5" />
           <InputField label="Accent Color" value="#8b5cf6" />
           <InputField label="Background" value="#0a0e1a" />
         </div>
       </SectionCard>
 
-      <SectionCard title="White Label" description="Remove Ardexa branding for your tenants">
-        <Toggle label="Hide 'Powered by Ardexa'" description="Remove platform attribution from footer and login screen" />
+      <SectionCard title="White Label" description="Remove Milliebot Inc. branding for your tenants">
+        <Toggle label="Hide 'Powered by Milliebot Inc.'" description="Remove platform attribution from footer and login screen" />
         <Toggle label="Custom Email Templates" description="Use your branding in system-sent emails" />
       </SectionCard>
     </>
@@ -511,7 +511,7 @@ function BillingSettings() {
                   <div className="text-xs" style={{ color: 'var(--text4)' }}>{inv.amount}</div>
                 </div>
               </div>
-              <span className="text-xs px-2 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.15)', color: 'var(--green)' }}>
+              <span className="text-xs px-2 py-1 rounded-full" style={{ background: 'rgba(107,164,138,0.15)', color: 'var(--green)' }}>
                 {inv.status}
               </span>
             </div>

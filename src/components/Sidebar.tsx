@@ -39,16 +39,16 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
       <div className="flex items-center gap-3 p-4 border-b" style={{ borderColor: 'var(--border)' }}>
         <div
           className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}
+          style={{ background: 'linear-gradient(135deg, #003146, #559CB5)' }}
         >
-          <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
             <rect x="8" y="8" width="16" height="16" rx="2" transform="rotate(45 16 16)" fill="white" opacity="0.9"/>
-            <circle cx="16" cy="16" r="4" fill="white"/>
+            <circle cx="16" cy="16" r="3.5" fill="#003146"/>
           </svg>
         </div>
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)' }}>Milliebot</div>
+            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>RISE</div>
             <div className="text-[11px] font-medium" style={{ color: 'var(--text4)' }}>Command Center</div>
           </div>
         )}
@@ -79,8 +79,8 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
                 onClick={() => onNavigate(item.id)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5"
                 style={{
-                  background: activeView === item.id ? 'rgba(59,130,246,0.15)' : 'transparent',
-                  color: activeView === item.id ? 'var(--blue-light)' : 'var(--text3)',
+                  background: activeView === item.id ? 'rgba(85,156,181,0.15)' : 'transparent',
+                  color: activeView === item.id ? 'var(--blue)' : 'var(--text3)',
                   borderLeft: activeView === item.id ? '3px solid var(--blue)' : '3px solid transparent',
                 }}
                 title={collapsed ? item.label : undefined}

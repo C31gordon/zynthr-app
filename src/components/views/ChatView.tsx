@@ -153,7 +153,7 @@ export default function ChatView() {
           <div>
             <h2 className="text-lg font-bold" style={{ color: 'var(--text)' }}>Operations Agent</h2>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--green)', boxShadow: '0 0 6px rgba(16,185,129,0.6)' }} />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--green)', boxShadow: '0 0 6px rgba(107,164,138,0.6)' }} />
               <span className="text-xs" style={{ color: 'var(--green)' }}>Online</span>
               <span className="text-xs" style={{ color: 'var(--text4)' }}>• Connected to Entrata, M365, Egnyte</span>
             </div>
@@ -175,7 +175,7 @@ export default function ChatView() {
               {msg.detectedAs && (
                 <div className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-t-lg mb-0" style={{
                   background: msg.detectedAs === 'suggestion' ? 'rgba(139,92,246,0.2)' :
-                    msg.detectedAs === 'ticket' ? 'rgba(245,158,11,0.2)' : 'rgba(59,130,246,0.2)',
+                    msg.detectedAs === 'ticket' ? 'rgba(245,158,11,0.2)' : 'rgba(85,156,181,0.2)',
                   color: msg.detectedAs === 'suggestion' ? 'var(--purple)' :
                     msg.detectedAs === 'ticket' ? 'var(--orange)' : 'var(--blue)',
                 }}>
@@ -230,8 +230,8 @@ export default function ChatView() {
 
                 {msg.confidence !== undefined && (
                   <span className="text-[11px] whitespace-nowrap px-2 py-1 rounded" style={{
-                    background: msg.confidence >= 90 ? 'rgba(16,185,129,0.15)' :
-                      msg.confidence >= 70 ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)',
+                    background: msg.confidence >= 90 ? 'rgba(107,164,138,0.15)' :
+                      msg.confidence >= 70 ? 'rgba(245,158,11,0.15)' : 'rgba(174,19,42,0.15)',
                     color: msg.confidence >= 90 ? 'var(--green)' :
                       msg.confidence >= 70 ? 'var(--orange)' : 'var(--red)',
                   }}>

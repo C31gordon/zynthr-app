@@ -154,7 +154,7 @@ const heatColor = (pct: number) => pct > 80 ? 'var(--green)' : pct >= 40 ? 'var(
 const Tooltip = ({ term, explanation }: { term: string; explanation: string }) => (
   <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
     <span
-      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: 'rgba(59,130,246,0.2)', color: 'var(--blue)', fontSize: 10, fontWeight: 700, cursor: 'help', marginLeft: 4, flexShrink: 0 }}
+      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: 'rgba(85,156,181,0.2)', color: 'var(--blue)', fontSize: 10, fontWeight: 700, cursor: 'help', marginLeft: 4, flexShrink: 0 }}
       className="tooltip-trigger"
       title={`${term}: ${explanation}`}
     >?</span>
@@ -196,8 +196,8 @@ const statusBadge = (s: string) => {
   const map: Record<string, { bg: string; color: string; label: string }> = {
     'on-track': { bg: 'rgba(34,197,94,0.15)', color: 'var(--green)', label: 'On Track' },
     'behind': { bg: 'rgba(249,115,22,0.15)', color: 'var(--orange)', label: 'Behind' },
-    'blocked': { bg: 'rgba(239,68,68,0.15)', color: 'var(--red)', label: 'Blocked' },
-    'complete': { bg: 'rgba(59,130,246,0.15)', color: 'var(--blue)', label: 'Complete' },
+    'blocked': { bg: 'rgba(174,19,42,0.15)', color: 'var(--red)', label: 'Blocked' },
+    'complete': { bg: 'rgba(85,156,181,0.15)', color: 'var(--blue)', label: 'Complete' },
   }
   const m = map[s] || map['on-track']
   return (
@@ -285,7 +285,7 @@ export default function OnboardingView() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{p.title}</h3>
-                            <span className="text-[11px] px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>
+                            <span className="text-[11px] px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>
                               {p.employees.length} assigned
                             </span>
                           </div>
@@ -358,7 +358,7 @@ export default function OnboardingView() {
                                     <ul className="list-disc list-inside text-[11px] mb-3 space-y-0.5" style={{ color: 'var(--text3)' }}>
                                       {step.gateBlocks?.map((b, bi) => <li key={bi}>{b}</li>)}
                                     </ul>
-                                    <div className="text-[11px] px-3 py-2 rounded-md" style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--red)' }}>
+                                    <div className="text-[11px] px-3 py-2 rounded-md" style={{ background: 'rgba(174,19,42,0.1)', color: 'var(--red)' }}>
                                       🛡️ Override requires: Department Head approval
                                     </div>
                                   </div>
@@ -452,7 +452,7 @@ export default function OnboardingView() {
                       <td className="px-4 py-3 whitespace-nowrap text-[11px]" style={{ color: 'var(--text3)' }}>{emp.daysIn}</td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>View</button>
+                          <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>View</button>
                           <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(249,115,22,0.15)', color: 'var(--orange)' }}>Nudge</button>
                         </div>
                       </td>
@@ -492,7 +492,7 @@ export default function OnboardingView() {
                     <span className="text-[12px] flex-shrink-0">{item.done ? '✅' : '○'}</span>
                     <span className="text-[11px] truncate" style={{ color: item.done ? 'var(--text4)' : 'var(--text)', textDecoration: item.done ? 'line-through' : 'none' }}>{item.step}</span>
                     {!item.done && i === sarahComplete && (
-                      <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-full whitespace-nowrap" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>Next</span>
+                      <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-full whitespace-nowrap" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>Next</span>
                     )}
                   </button>
                 ))}

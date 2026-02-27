@@ -188,7 +188,7 @@ export default function DashboardView() {
         <div className="glass-card-static rounded-xl overflow-hidden">
           <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
             <h3 className="text-sm font-bold" style={{ color: 'var(--text)' }}>🛡️ Security Alerts</h3>
-            <span className="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap" style={{ background: 'rgba(239,68,68,0.15)', color: 'var(--red)' }}>
+            <span className="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap" style={{ background: 'rgba(174,19,42,0.15)', color: 'var(--red)' }}>
               1 critical
             </span>
           </div>
@@ -240,7 +240,7 @@ export default function DashboardView() {
                     <span className="inline-flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full" style={{
                         background: dept.status === 'active' ? 'var(--green)' : 'var(--text4)',
-                        boxShadow: dept.status === 'active' ? '0 0 6px rgba(16,185,129,0.6)' : 'none',
+                        boxShadow: dept.status === 'active' ? '0 0 6px rgba(107,164,138,0.6)' : 'none',
                       }} />
                       <span style={{ color: dept.status === 'active' ? 'var(--green)' : 'var(--text4)' }}>
                         {dept.status === 'active' ? 'Active' : 'Pending'}

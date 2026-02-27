@@ -148,7 +148,7 @@ export default function LoginPage() {
                 </div>
                 {error && (
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
-                    style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: 'var(--red-light)' }}>
+                    style={{ background: 'rgba(174,19,42,0.1)', border: '1px solid rgba(174,19,42,0.3)', color: 'var(--red-light)' }}>
                     ⚠️ {error}
                   </div>
                 )}
@@ -186,7 +186,7 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 rounded-lg text-sm" style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }} />
                   {error && (
                     <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
-                      style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: 'var(--red-light)' }}>
+                      style={{ background: 'rgba(174,19,42,0.1)', border: '1px solid rgba(174,19,42,0.3)', color: 'var(--red-light)' }}>
                       ⚠️ {error}
                     </div>
                   )}

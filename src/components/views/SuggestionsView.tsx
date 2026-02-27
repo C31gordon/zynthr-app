@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { getSuggestions } from '@/lib/data'
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
-  new: { label: 'New', bg: 'rgba(59,130,246,0.15)', color: 'var(--blue-light)' },
+  new: { label: 'New', bg: 'rgba(85,156,181,0.15)', color: 'var(--blue-light)' },
   under_review: { label: 'Under Review', bg: 'rgba(139,92,246,0.15)', color: 'var(--purple)' },
   planned: { label: 'Planned', bg: 'rgba(245,158,11,0.15)', color: 'var(--orange-light)' },
-  building: { label: 'Building', bg: 'rgba(59,130,246,0.15)', color: 'var(--blue-light)' },
-  shipped: { label: '✅ Shipped', bg: 'rgba(16,185,129,0.15)', color: 'var(--green-light)' },
+  building: { label: 'Building', bg: 'rgba(85,156,181,0.15)', color: 'var(--blue-light)' },
+  shipped: { label: '✅ Shipped', bg: 'rgba(107,164,138,0.15)', color: 'var(--green-light)' },
   declined: { label: 'Declined', bg: 'rgba(100,116,139,0.15)', color: 'var(--text4)' },
 }
 

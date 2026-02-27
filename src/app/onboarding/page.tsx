@@ -214,7 +214,7 @@ export default function OnboardingPage() {
                   <button key={dept} type="button" onClick={() => toggleDept(dept)}
                     className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all text-left"
                     style={{
-                      background: selectedDepts.includes(dept) ? 'rgba(59,130,246,0.15)' : 'var(--bg)',
+                      background: selectedDepts.includes(dept) ? 'rgba(85,156,181,0.15)' : 'var(--bg)',
                       color: selectedDepts.includes(dept) ? 'var(--blue-light)' : 'var(--text3)',
                       border: `1px solid ${selectedDepts.includes(dept) ? 'var(--blue)' : 'var(--border)'}`,
                     }}>
@@ -306,7 +306,7 @@ export default function OnboardingPage() {
 
               {error && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
-                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: 'var(--red-light)' }}>
+                  style={{ background: 'rgba(174,19,42,0.1)', border: '1px solid rgba(174,19,42,0.3)', color: 'var(--red-light)' }}>
                   ⚠️ {error}
                 </div>
               )}

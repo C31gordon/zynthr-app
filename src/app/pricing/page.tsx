@@ -66,7 +66,7 @@ export default function PricingPage() {
               style={{ background: '#fff', left: annual ? '30px' : '4px' }} />
           </button>
           <span className="text-sm font-medium" style={{ color: annual ? 'var(--text)' : 'var(--text4)' }}>
-            Annual <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: 'var(--green)' }}>Save 20%</span>
+            Annual <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'rgba(107,164,138,0.15)', color: 'var(--green)' }}>Save 20%</span>
           </span>
         </div>
 
@@ -294,7 +294,7 @@ export default function PricingPage() {
                 </>
               )}
               {trainingSeats >= TRAINING_ADDON.volumeThreshold && (
-                <div className="flex items-center gap-2 text-xs px-2 py-1.5 rounded" style={{ background: 'rgba(16,185,129,0.1)' }}>
+                <div className="flex items-center gap-2 text-xs px-2 py-1.5 rounded" style={{ background: 'rgba(107,164,138,0.1)' }}>
                   <span style={{ color: 'var(--green)' }}>🏷️ Volume pricing applied</span>
                 </div>
               )}

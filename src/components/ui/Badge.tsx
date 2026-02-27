@@ -3,10 +3,10 @@
 type BadgeVariant = 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'teal' | 'gold' | 'gray'
 
 const variantStyles: Record<BadgeVariant, { bg: string; color: string }> = {
-  blue: { bg: 'rgba(59,130,246,0.15)', color: 'var(--blue)' },
-  green: { bg: 'rgba(16,185,129,0.15)', color: 'var(--green)' },
+  blue: { bg: 'rgba(85,156,181,0.15)', color: 'var(--blue)' },
+  green: { bg: 'rgba(107,164,138,0.15)', color: 'var(--green)' },
   orange: { bg: 'rgba(245,158,11,0.15)', color: 'var(--orange)' },
-  red: { bg: 'rgba(239,68,68,0.15)', color: 'var(--red)' },
+  red: { bg: 'rgba(174,19,42,0.15)', color: 'var(--red)' },
   purple: { bg: 'rgba(139,92,246,0.15)', color: 'var(--purple)' },
   teal: { bg: 'rgba(20,184,166,0.15)', color: 'var(--teal)' },
   gold: { bg: 'rgba(245,166,35,0.15)', color: 'var(--gold)' },

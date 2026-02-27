@@ -93,13 +93,13 @@ const certificates = [
 const certStatusColor: Record<string, { bg: string; color: string }> = {
   Active: { bg: 'rgba(34,197,94,0.15)', color: 'var(--green)' },
   Expiring: { bg: 'rgba(249,115,22,0.15)', color: 'var(--orange)' },
-  Expired: { bg: 'rgba(239,68,68,0.15)', color: 'var(--red)' },
+  Expired: { bg: 'rgba(174,19,42,0.15)', color: 'var(--red)' },
 }
 
 const typeBadge = (type: 'Required' | 'Recommended' | 'Optional') => {
   const map = {
-    Required: { bg: 'rgba(239,68,68,0.15)', color: 'var(--red)' },
-    Recommended: { bg: 'rgba(59,130,246,0.15)', color: 'var(--blue)' },
+    Required: { bg: 'rgba(174,19,42,0.15)', color: 'var(--red)' },
+    Recommended: { bg: 'rgba(85,156,181,0.15)', color: 'var(--blue)' },
     Optional: { bg: 'rgba(107,114,128,0.15)', color: 'var(--text3)' },
   }
   const m = map[type]
@@ -183,7 +183,7 @@ export default function TrainingView() {
                   <div className="h-full rounded-full" style={{ width: `${mod.completion}%`, background: mod.completion === 100 ? 'var(--green)' : 'var(--blue)' }} />
                 </div>
               </div>
-              <button className="mt-auto text-[11px] px-3 py-1.5 rounded-md font-medium self-start" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>
+              <button className="mt-auto text-[11px] px-3 py-1.5 rounded-md font-medium self-start" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>
                 Assign
               </button>
             </div>
@@ -260,7 +260,7 @@ export default function TrainingView() {
                   <span>{item.lastEdited}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-3">
-                  <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>Edit</button>
+                  <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>Edit</button>
                   <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'var(--bg3)', color: 'var(--text3)' }}>Preview</button>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function TrainingView() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           <div className="flex items-center gap-2">
-                            <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>Download</button>
+                            <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(85,156,181,0.15)', color: 'var(--blue)' }}>Download</button>
                             {cert.status !== 'Active' && (
                               <button className="text-[11px] px-2 py-1 rounded-md font-medium" style={{ background: 'rgba(249,115,22,0.15)', color: 'var(--orange)' }}>Renew</button>
                             )}

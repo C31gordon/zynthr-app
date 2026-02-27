@@ -17,6 +17,24 @@ export default function TopBar({ user, onNavigate, isMobile, onMenuToggle }: Top
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isDark, setIsDark] = useState(true)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme')
+    if (saved === 'light') setIsDark(false)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = !isDark
+    setIsDark(next)
+    if (next) {
+      document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light')
+      localStorage.setItem('theme', 'light')
+    }
+  }
   const notifRef = useRef<HTMLDivElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -122,6 +140,16 @@ export default function TopBar({ user, onNavigate, isMobile, onMenuToggle }: Top
 
       {/* Right actions */}
       <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+          style={{ color: 'var(--text3)', fontSize: '18px' }}
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+
         {/* Demo badge */}
         {DEMO_MODE && (
           <span className="text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap"
@@ -138,7 +166,7 @@ export default function TopBar({ user, onNavigate, isMobile, onMenuToggle }: Top
             🔔
             {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-[9px] font-bold"
-                style={{ background: 'var(--red)', color: 'white', boxShadow: '0 0 4px rgba(239,68,68,0.6)', width: '18px', height: '18px' }}>
+                style={{ background: 'var(--red)', color: 'white', boxShadow: '0 0 4px rgba(174,19,42,0.6)', width: '18px', height: '18px' }}>
                 {unreadCount}
               </span>
             )}
@@ -153,7 +181,7 @@ export default function TopBar({ user, onNavigate, isMobile, onMenuToggle }: Top
               <div className="max-h-80 overflow-y-auto">
                 {notifications.map((n, i) => (
                   <div key={i} className="px-4 py-3 border-b transition-colors hover:bg-white/5 cursor-pointer"
-                    style={{ borderColor: 'var(--border)', background: n.unread ? 'rgba(59,130,246,0.05)' : 'transparent' }}>
+                    style={{ borderColor: 'var(--border)', background: n.unread ? 'rgba(85,156,181,0.05)' : 'transparent' }}>
                     <div className="flex items-start gap-2.5">
                       <span className="text-sm mt-0.5 flex-shrink-0">{n.icon}</span>
                       <div className="flex-1 min-w-0">

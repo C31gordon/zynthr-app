@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         name: companyName,
         slug,
         plan: 'free',
-        brand_primary: '#3b82f6',
+        brand_primary: '#559CB5',
         brand_secondary: '#8b5cf6',
       })
       .select()

@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { getTickets } from '@/lib/data'
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
-  new: { label: 'New', bg: 'rgba(59,130,246,0.15)', color: 'var(--blue-light)' },
+  new: { label: 'New', bg: 'rgba(85,156,181,0.15)', color: 'var(--blue-light)' },
   assigned: { label: 'Assigned', bg: 'rgba(139,92,246,0.15)', color: 'var(--purple)' },
   in_progress: { label: 'In Progress', bg: 'rgba(245,158,11,0.15)', color: 'var(--orange-light)' },
   waiting_on_requester: { label: 'Waiting', bg: 'rgba(100,116,139,0.15)', color: 'var(--text3)' },
-  resolved: { label: 'Resolved', bg: 'rgba(16,185,129,0.15)', color: 'var(--green-light)' },
+  resolved: { label: 'Resolved', bg: 'rgba(107,164,138,0.15)', color: 'var(--green-light)' },
   closed: { label: 'Closed', bg: 'rgba(100,116,139,0.15)', color: 'var(--text4)' },
 }
 
