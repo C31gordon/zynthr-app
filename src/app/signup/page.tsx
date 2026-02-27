@@ -22,6 +22,21 @@ export default function SignupPage() {
       setLoading(false)
       return
     }
+    if (!/[A-Z]/.test(password)) {
+      setError('Password must include at least one uppercase letter')
+      setLoading(false)
+      return
+    }
+    if (!/[a-z]/.test(password)) {
+      setError('Password must include at least one lowercase letter')
+      setLoading(false)
+      return
+    }
+    if (!/[0-9]/.test(password)) {
+      setError('Password must include at least one number')
+      setLoading(false)
+      return
+    }
 
     const { error: signUpError } = await supabase.auth.signUp({
       email,

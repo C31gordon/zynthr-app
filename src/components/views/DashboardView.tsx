@@ -51,7 +51,22 @@ export default function DashboardView() {
       })
   }, [])
 
-  const openTickets = data.tickets.filter((t: { status: string }) => !['resolved', 'closed'].includes(t.status))
+  // Period filtering
+  const periodStart = (() => {
+    const now = new Date()
+    if (selectedPeriod === 'today') {
+      const d = new Date(now); d.setHours(0, 0, 0, 0); return d
+    }
+    if (selectedPeriod === 'week') return new Date(now.getTime() - 7 * 86400000)
+    return new Date(now.getTime() - 30 * 86400000) // month
+  })()
+
+  const inPeriod = (dateStr: string) => new Date(dateStr) >= periodStart
+  const periodTickets = data.tickets.filter((t: { created_at: string }) => inPeriod(t.created_at))
+  const periodSuggestions = data.suggestions.filter((s: { created_at: string }) => inPeriod(s.created_at))
+  const periodAudit = data.audit.filter((a: { created_at: string }) => inPeriod(a.created_at))
+
+  const openTickets = periodTickets.filter((t: { status: string }) => !['resolved', 'closed'].includes(t.status))
   const urgentCount = openTickets.filter((t: { priority: string }) => t.priority === 'urgent').length
   const highCount = openTickets.filter((t: { priority: string }) => t.priority === 'high').length
   const medCount = openTickets.filter((t: { priority: string }) => t.priority === 'medium').length
@@ -60,7 +75,7 @@ export default function DashboardView() {
     { label: 'Active Agents', value: String(data.agents.filter((a: { status: string }) => a.status === 'active').length), sub: data.agents.map((a: { name: string }) => a.name.replace(' Agent', '')).join(' • ') || 'None deployed', color: 'var(--blue)', icon: '🤖', trend: '', trendUp: true },
     { label: 'Support Bots', value: String(data.bots.length), sub: `${data.bots.filter((b: { status: string }) => b.status === 'active').length} active`, color: 'var(--green)', icon: '⚙️', trend: '', trendUp: true },
     { label: 'Open Tickets', value: String(openTickets.length), sub: `${urgentCount} urgent, ${highCount} high, ${medCount} medium`, color: 'var(--orange)', icon: '🎫', trend: '', trendUp: false },
-    { label: 'Suggestions', value: String(data.suggestions.length), sub: `${data.suggestions.filter((s: { status: string }) => s.status === 'under_review').length} under review`, color: 'var(--purple)', icon: '💡', trend: '', trendUp: true },
+    { label: 'Suggestions', value: String(periodSuggestions.length), sub: `${periodSuggestions.filter((s: { status: string }) => s.status === 'under_review').length} under review`, color: 'var(--purple)', icon: '💡', trend: '', trendUp: true },
   ]
 
   // Build department health from real data
@@ -144,7 +159,7 @@ export default function DashboardView() {
             <button className="text-xs" style={{ color: 'var(--blue)' }}>View All</button>
           </div>
           <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
-            {data.audit.map((entry: { id: string; action: string; details: Record<string, unknown>; user?: { full_name: string } | null; created_at: string }, i: number) => {
+            {periodAudit.map((entry: { id: string; action: string; details: Record<string, unknown>; user?: { full_name: string } | null; created_at: string }, i: number) => {
               const meta = actionLabels[entry.action] || { icon: '📋', label: entry.action.replace(/_/g, ' ') }
               const actor = entry.user?.full_name || 'System'
               const ago = getTimeAgo(entry.created_at)
@@ -163,7 +178,7 @@ export default function DashboardView() {
                 </div>
               )
             })}
-            {data.audit.length === 0 && (
+            {periodAudit.length === 0 && (
               <div className="px-5 py-8 text-center text-sm" style={{ color: 'var(--text4)' }}>No recent activity</div>
             )}
           </div>

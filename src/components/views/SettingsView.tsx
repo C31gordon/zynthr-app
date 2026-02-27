@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type SettingsTab = 'general' | 'sso' | 'notifications' | 'branding' | 'billing' | 'danger'
+type SettingsTab = 'general' | 'security' | 'sso' | 'notifications' | 'branding' | 'billing' | 'danger'
 
 interface ToggleSetting {
   id: string
@@ -16,6 +16,7 @@ export default function SettingsView() {
 
   const tabs: { key: SettingsTab; label: string; icon: string }[] = [
     { key: 'general', label: 'General', icon: '⚙️' },
+    { key: 'security', label: 'Security', icon: '🛡️' },
     { key: 'sso', label: 'Single Sign-On', icon: '🔑' },
     { key: 'notifications', label: 'Notifications', icon: '🔔' },
     { key: 'branding', label: 'Branding', icon: '🎨' },
@@ -55,6 +56,7 @@ export default function SettingsView() {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {activeTab === 'general' && <GeneralSettings />}
+          {activeTab === 'security' && <SecuritySettings />}
           {activeTab === 'sso' && <SSOSettings />}
           {activeTab === 'notifications' && <NotificationSettings />}
           {activeTab === 'branding' && <BrandingSettings />}
@@ -111,6 +113,77 @@ function Toggle({ label, description, defaultChecked = false }: { label: string;
           style={{ left: checked ? '22px' : '2px' }} />
       </button>
     </div>
+  )
+}
+
+function SecuritySettings() {
+  const [emailVerification, setEmailVerification] = useState(false)
+  const [require2FA, setRequire2FA] = useState(false)
+  const currentPlan: string = 'enterprise' // would come from tenant context
+
+  return (
+    <>
+      <SectionCard title="Verification & Authentication" description="Control how users verify identity">
+        <div className="flex items-center justify-between py-3" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div>
+            <div className="text-sm" style={{ color: 'var(--text)' }}>Require Email Verification</div>
+            <div className="text-xs leading-relaxed" style={{ color: 'var(--text4)' }}>
+              New users must verify their email before accessing the platform
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {currentPlan === 'free' && (
+              <span className="text-[11px] px-2 py-1 rounded-full" style={{ background: 'var(--bg3)', color: 'var(--text4)' }}>
+                Coming Soon — Available in Enterprise
+              </span>
+            )}
+            <button
+              onClick={() => currentPlan !== 'free' && setEmailVerification(!emailVerification)}
+              className="w-10 h-5 rounded-full transition-all relative"
+              style={{ background: emailVerification ? 'var(--blue)' : 'var(--bg4)', opacity: currentPlan === 'free' ? 0.4 : 1 }}
+            >
+              <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+                style={{ left: emailVerification ? '22px' : '2px' }} />
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between py-3">
+          <div>
+            <div className="text-sm" style={{ color: 'var(--text)' }}>Require Two-Factor Authentication (2FA)</div>
+            <div className="text-xs leading-relaxed" style={{ color: 'var(--text4)' }}>
+              All users must set up TOTP or SMS-based 2FA to access the platform
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {currentPlan === 'free' && (
+              <span className="text-[11px] px-2 py-1 rounded-full" style={{ background: 'var(--bg3)', color: 'var(--text4)' }}>
+                Coming Soon — Available in Enterprise
+              </span>
+            )}
+            <button
+              onClick={() => currentPlan !== 'free' && setRequire2FA(!require2FA)}
+              className="w-10 h-5 rounded-full transition-all relative"
+              style={{ background: require2FA ? 'var(--blue)' : 'var(--bg4)', opacity: currentPlan === 'free' ? 0.4 : 1 }}
+            >
+              <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+                style={{ left: require2FA ? '22px' : '2px' }} />
+            </button>
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard title="Password Policy" description="Enforce password strength requirements">
+        <Toggle label="Minimum 8 Characters" description="Passwords must be at least 8 characters long" defaultChecked />
+        <Toggle label="Require Mixed Case" description="At least one uppercase and one lowercase letter" defaultChecked />
+        <Toggle label="Require Numbers" description="At least one numeric digit" defaultChecked />
+        <Toggle label="Require Special Characters" description="At least one symbol (!@#$%^&*)" />
+      </SectionCard>
+
+      <SectionCard title="Session Security">
+        <Toggle label="Force Logout on Password Change" description="Invalidate all sessions when a user changes their password" defaultChecked />
+        <Toggle label="Single Session Only" description="Allow only one active session per user" />
+      </SectionCard>
+    </>
   )
 }
 
