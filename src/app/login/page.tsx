@@ -203,6 +203,13 @@ export default function LoginPage() {
           )}
         </div>
 
+        {/* Learn More */}
+        <div className="text-center mt-4">
+          <a href="/landing" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>
+            ← Learn more about Milliebot
+          </a>
+        </div>
+
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-xs" style={{ color: 'var(--text4)' }}>
