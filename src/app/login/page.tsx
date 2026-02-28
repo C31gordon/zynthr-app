@@ -12,6 +12,7 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
+  const [showExpired, setShowExpired] = useState(false)
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
@@ -25,6 +26,12 @@ export default function LoginPage() {
   const [signupPassword, setSignupPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [orgName, setOrgName] = useState('')
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("expired") === "1") {
+      setShowExpired(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('milliebot_authenticated') === 'true') {
@@ -123,6 +130,12 @@ export default function LoginPage() {
         </div>
 
         <div className="glass-card p-8">
+          {showExpired && (
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs mb-4"
+              style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", color: "#f59e0b" }}>
+              🔒 Your session expired for security. Please sign in again.
+            </div>
+          )}
           {/* Tabs */}
           <div className="flex mb-6 rounded-lg overflow-hidden" style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
             <button onClick={() => { setMode('signin'); setErrors({}) }}

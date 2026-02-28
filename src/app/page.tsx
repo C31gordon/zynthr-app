@@ -23,6 +23,7 @@ import PatientDashboardView from '@/components/views/PatientDashboardView'
 import OrgSetupWizardView from '@/components/views/OrgSetupWizardView'
 import WelcomeBanner from "@/components/WelcomeBanner"
 import GuidedTour from "@/components/GuidedTour"
+import SessionTimeout from "@/components/SessionTimeout"
 
 type ViewType = 'dashboard' | 'agents' | 'chat' | 'tickets' | 'suggestions' | 'workflows' | 'policies' | 'audit' | 'settings' | 'onboarding' | 'training' | 'healthcare' | 'setup' | 'birthcenter' | 'patientdash' | 'orgsetup'
 
@@ -155,6 +156,7 @@ export default function Home() {
         </main>
         <GuidedTour active={tourActive} onComplete={() => setTourActive(false)} onNavigate={(v) => handleNavigate(v as ViewType)} />
       </div>
+    {isAuthenticated && <SessionTimeout />}
     <FloatingChat /></div>
   )
 }
