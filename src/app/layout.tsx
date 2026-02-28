@@ -9,12 +9,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Milliebot Command Center',
+  title: 'Zynthr Command Center',
   description: 'Enterprise AI Agent Orchestration Platform — Powered by RKBAC™',
   keywords: ['AI', 'agents', 'enterprise', 'RKBAC', 'automation', 'property management'],
-  authors: [{ name: 'Milliebot Inc.' }],
+  authors: [{ name: 'Zynthr Inc.' }],
   openGraph: {
-    title: 'Milliebot Command Center',
+    title: 'Zynthr Command Center',
     description: 'Enterprise AI Agent Orchestration Platform',
     type: 'website',
   },

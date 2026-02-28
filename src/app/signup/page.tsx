@@ -142,7 +142,7 @@ export default function SignupPage() {
           <p className="text-xs" style={{ color: 'var(--text4)' }}>
             Powered by <strong>RKBAC™</strong> — Roles & Knowledge-Based Access Control
           </p>
-          <p className="text-xs mt-1" style={{ color: 'var(--text4)' }}>© 2026 Milliebot Inc. All rights reserved.</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--text4)' }}>© 2026 Zynthr Inc. All rights reserved.</p>
         </div>
       </div>
     </div>

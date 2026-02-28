@@ -11,21 +11,21 @@ export interface TenantInfo {
 export function getTenantFromSubdomain(): TenantInfo | null {
   if (typeof window === 'undefined') return null
   const hostname = window.location.hostname
-  const match = hostname.match(/^([a-z0-9][a-z0-9-]*[a-z0-9])\.milliebot\.ai$/)
+  const match = hostname.match(/^([a-z0-9][a-z0-9-]*[a-z0-9])\.zynthr\.ai$/)
   if (!match) return null
   const subdomain = match[1]
   if (RESERVED_SUBDOMAINS.includes(subdomain)) return null
-  return { subdomain, fullDomain: `${subdomain}.milliebot.ai` }
+  return { subdomain, fullDomain: `${subdomain}.zynthr.ai` }
 }
 
 export function getTenantFromStorage(): TenantInfo | null {
   if (typeof window === 'undefined') return null
   try {
-    const raw = localStorage.getItem('milliebot_user')
+    const raw = localStorage.getItem('zynthr_user')
     if (!raw) return null
     const user = JSON.parse(raw)
     if (user.subdomain) {
-      return { subdomain: user.subdomain, fullDomain: `${user.subdomain}.milliebot.ai` }
+      return { subdomain: user.subdomain, fullDomain: `${user.subdomain}.zynthr.ai` }
     }
   } catch { /* ignore */ }
   return null
@@ -50,7 +50,7 @@ export function validateSubdomain(value: string): { valid: boolean; error?: stri
 export function isSubdomainTaken(value: string): boolean {
   if (typeof window === 'undefined') return false
   try {
-    const users = JSON.parse(localStorage.getItem('milliebot_users') || '[]')
+    const users = JSON.parse(localStorage.getItem('zynthr_users') || '[]')
     return users.some((u: { subdomain?: string }) => u.subdomain === value)
   } catch { return false }
 }

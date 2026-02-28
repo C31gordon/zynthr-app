@@ -44,7 +44,7 @@ export default function LoginPage() {
   }, [])
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('milliebot_authenticated') === 'true') {
+    if (typeof window !== 'undefined' && localStorage.getItem('zynthr_authenticated') === 'true') {
       window.location.href = '/'
     }
   }, [])
@@ -61,7 +61,7 @@ export default function LoginPage() {
     if (Object.keys(errs).length) { setErrors(errs); return }
 
     setLoading(true)
-    const storedUsers = JSON.parse(localStorage.getItem('milliebot_users') || '[]')
+    const storedUsers = JSON.parse(localStorage.getItem('zynthr_users') || '[]')
     const found = storedUsers.find((u: { email: string; password: string }) =>
       u.email.toLowerCase() === email.toLowerCase() && u.password === password
     )
@@ -75,10 +75,10 @@ export default function LoginPage() {
       : { name: email.split('@')[0], email, orgName: '', createdAt: new Date().toISOString() }
     if (!found) {
       storedUsers.push({ ...userData, password })
-      localStorage.setItem('milliebot_users', JSON.stringify(storedUsers))
+      localStorage.setItem('zynthr_users', JSON.stringify(storedUsers))
     }
-    localStorage.setItem('milliebot_user', JSON.stringify(userData))
-    localStorage.setItem('milliebot_authenticated', 'true')
+    localStorage.setItem('zynthr_user', JSON.stringify(userData))
+    localStorage.setItem('zynthr_authenticated', 'true')
     setTimeout(() => { window.location.href = '/' }, 400)
   }
 
@@ -99,7 +99,7 @@ export default function LoginPage() {
     if (Object.keys(errs).length) { setErrors(errs); return }
 
     setLoading(true)
-    const storedUsers = JSON.parse(localStorage.getItem('milliebot_users') || '[]')
+    const storedUsers = JSON.parse(localStorage.getItem('zynthr_users') || '[]')
     if (storedUsers.find((u: { email: string }) => u.email.toLowerCase() === signupEmail.toLowerCase())) {
       setErrors({ general: 'An account with this email already exists' })
       setLoading(false)
@@ -107,9 +107,9 @@ export default function LoginPage() {
     }
     const userData = { firstName: firstName.trim(), lastName: lastName.trim(), name: firstName.trim() + ' ' + lastName.trim(), email: signupEmail.trim(), orgName: orgName.trim(), subdomain: subdomain.trim(), createdAt: new Date().toISOString() }
     storedUsers.push({ ...userData, password: signupPassword })
-    localStorage.setItem('milliebot_users', JSON.stringify(storedUsers))
-    localStorage.setItem('milliebot_user', JSON.stringify(userData))
-    localStorage.setItem('milliebot_authenticated', 'true')
+    localStorage.setItem('zynthr_users', JSON.stringify(storedUsers))
+    localStorage.setItem('zynthr_user', JSON.stringify(userData))
+    localStorage.setItem('zynthr_authenticated', 'true')
     setTimeout(() => { window.location.href = '/' }, 400)
   }
 
@@ -137,7 +137,7 @@ export default function LoginPage() {
               <circle cx="16" cy="16" r="4" fill="white"/>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>Welcome to Milliebot</h1>
+          <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>Welcome to Zynthr</h1>
           <p className="text-sm" style={{ color: 'var(--text3)' }}>Your AI-powered command center</p>
         </div>
 
@@ -265,11 +265,11 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mt-6">
-          <a href="/landing" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>← Learn more about Milliebot</a>
+          <a href="/landing" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>← Learn more about Zynthr</a>
         </div>
         <div className="text-center mt-4">
           <p className="text-xs" style={{ color: 'var(--text4)' }}>Powered by <strong>RKBAC™</strong> — Roles & Knowledge-Based Access Control</p>
-          <p className="text-xs mt-1" style={{ color: 'var(--text4)' }}>© 2026 Milliebot Inc. All rights reserved.</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--text4)' }}>© 2026 Zynthr Inc. All rights reserved.</p>
         </div>
       </div>
       <LegalModal title="Terms of Service" content={TERMS_OF_SERVICE} isOpen={showTosModal} onClose={() => setShowTosModal(false)} />

@@ -207,7 +207,7 @@ export default function SettingsView() {
 }
 
 function GeneralSettings({ showToast }: { showToast: (m: string) => void }) {
-  const [orgName, setOrgName] = useState(() => { if (typeof window !== 'undefined') { const u = localStorage.getItem('milliebot_user'); if (u) { try { return JSON.parse(u).orgName || 'Milliebot' } catch { return 'Milliebot' } } } return 'Milliebot' })
+  const [orgName, setOrgName] = useState(() => { if (typeof window !== 'undefined') { const u = localStorage.getItem('zynthr_user'); if (u) { try { return JSON.parse(u).orgName || 'Zynthr' } catch { return 'Zynthr' } } } return 'Zynthr' })
   const [industry, setIndustry] = useState('Multifamily Real Estate')
   const [size, setSize] = useState('~30,000 units')
   const [contact, setContact] = useState('cgordon@risere.com')
@@ -602,10 +602,10 @@ function SecuritySettings() {
   const [require2FA, setRequire2FA] = useState(false)
   const [tenantId, setTenantId] = useState('')
   useEffect(() => {
-    let id = localStorage.getItem('milliebot_tenant_id')
+    let id = localStorage.getItem('zynthr_tenant_id')
     if (!id) {
       id = crypto.randomUUID()
-      localStorage.setItem('milliebot_tenant_id', id)
+      localStorage.setItem('zynthr_tenant_id', id)
     }
     setTenantId(id)
   }, [])
@@ -688,7 +688,7 @@ function AgreementsSection() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+        const stored = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
         setAgreements(stored)
       } catch { /* noop */ }
     }
@@ -885,8 +885,8 @@ function BrandingSettings() {
           <InputField label="Background" value="#0a0e1a" />
         </div>
       </SectionCard>
-      <SectionCard title="White Label" description="Remove Milliebot Inc. branding for your tenants">
-        <StaticToggle label="Hide 'Powered by Milliebot Inc.'" description="Remove platform attribution from footer and login screen" />
+      <SectionCard title="White Label" description="Remove Zynthr Inc. branding for your tenants">
+        <StaticToggle label="Hide 'Powered by Zynthr Inc.'" description="Remove platform attribution from footer and login screen" />
         <StaticToggle label="Custom Email Templates" description="Use your branding in system-sent emails" />
       </SectionCard>
     </>

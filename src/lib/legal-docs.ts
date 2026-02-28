@@ -2,11 +2,11 @@ export const TERMS_OF_SERVICE = `TERMS OF SERVICE
 
 Last Updated: February 28, 2026
 
-Welcome to Milliebot, operated by [COMPANY_NAME]. By creating an account or using our platform, you agree to these Terms of Service ("Terms"). Please read them carefully.
+Welcome to Zynthr, operated by [COMPANY_NAME]. By creating an account or using our platform, you agree to these Terms of Service ("Terms"). Please read them carefully.
 
 1. SERVICE DESCRIPTION
 
-Milliebot is an AI-powered command center platform that provides intelligent automation, workflow management, role-based access control (RKBAC), and operational intelligence for organizations. The Platform includes AI agents, bots, chat interfaces, ticketing systems, training modules, and integrations with third-party services.
+Zynthr is an AI-powered command center platform that provides intelligent automation, workflow management, role-based access control (RKBAC), and operational intelligence for organizations. The Platform includes AI agents, bots, chat interfaces, ticketing systems, training modules, and integrations with third-party services.
 
 The Platform is provided on a software-as-a-service (SaaS) basis. [COMPANY_NAME] hosts, maintains, and updates the Platform. Your access is subject to your subscription plan and these Terms.
 
@@ -101,14 +101,14 @@ You agree not to:
 
 10.4 Assignment. You may not assign your rights under these Terms without [COMPANY_NAME] written consent.
 
-10.5 Contact. For questions about these Terms, contact us at legal@milliebot.com.`
+10.5 Contact. For questions about these Terms, contact us at legal@zynthr.com.`
 
 
 export const PRIVACY_POLICY = `PRIVACY POLICY
 
 Last Updated: February 28, 2026
 
-[COMPANY_NAME] ("we," "us," or "our") operates the Milliebot platform. This Privacy Policy describes how we collect, use, store, and protect your information when you use our services.
+[COMPANY_NAME] ("we," "us," or "our") operates the Zynthr platform. This Privacy Policy describes how we collect, use, store, and protect your information when you use our services.
 
 1. INFORMATION WE COLLECT
 
@@ -188,7 +188,7 @@ Last Updated: February 28, 2026
 
 5.6 Restriction. You may request that we restrict processing of your personal information in certain circumstances.
 
-5.7 To exercise any of these rights, contact us at privacy@milliebot.com.
+5.7 To exercise any of these rights, contact us at privacy@zynthr.com.
 
 6. HIPAA COMPLIANCE (FOR HEALTHCARE CLIENTS)
 
@@ -232,9 +232,9 @@ Last Updated: February 28, 2026
 
 For questions, concerns, or requests regarding this Privacy Policy or your data:
 
-Email: privacy@milliebot.com
+Email: privacy@zynthr.com
 Address: [COMPANY_NAME], Jacksonville, Florida
 
-For HIPAA-related inquiries: hipaa@milliebot.com
+For HIPAA-related inquiries: hipaa@zynthr.com
 
-Data Protection Officer: dpo@milliebot.com`
+Data Protection Officer: dpo@zynthr.com`

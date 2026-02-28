@@ -67,8 +67,8 @@ export default function TopBar({ user, localUser, isAuthenticated, onNavigate, i
   }, [searchQuery])
 
   const handleLogout = () => {
-    localStorage.removeItem('milliebot_authenticated')
-    localStorage.removeItem('milliebot_user')
+    localStorage.removeItem('zynthr_authenticated')
+    localStorage.removeItem('zynthr_user')
     window.location.href = '/login'
   }
 

@@ -35,7 +35,7 @@ function WorkspaceBar() {
   if (!sub) return null
   return (
     <div style={{ background: 'rgba(85,156,181,0.08)', borderBottom: '1px solid var(--border)', padding: '6px 24px', fontSize: 12, color: 'var(--text4)' }}>
-      Your workspace: <strong style={{ color: 'var(--text3)' }}>{sub}.milliebot.ai</strong>
+      Your workspace: <strong style={{ color: 'var(--text3)' }}>{sub}.zynthr.ai</strong>
     </div>
   )
 }
@@ -72,7 +72,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading) {
-      const completed = localStorage.getItem("milliebot_tour_completed") === "true"
+      const completed = localStorage.getItem("zynthr_tour_completed") === "true"
       if (!completed) setTourActive(true)
     }
   }, [loading])
@@ -85,10 +85,10 @@ export default function Home() {
   useEffect(() => {
     if (DEMO_MODE) {
       // In demo mode, still check if user is authenticated for personalization
-      const auth = localStorage.getItem('milliebot_authenticated')
+      const auth = localStorage.getItem('zynthr_authenticated')
       if (auth === 'true') {
         try {
-          const userData = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+          const userData = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
           if (userData.name) setLocalUser(userData)
           setIsAuthenticated(true)
         } catch { /* ignore */ }
@@ -98,14 +98,14 @@ export default function Home() {
     }
 
     // Non-demo mode: require authentication
-    const auth = localStorage.getItem('milliebot_authenticated')
+    const auth = localStorage.getItem('zynthr_authenticated')
     if (auth !== 'true') {
       window.location.href = '/login'
       return
     }
 
     try {
-      const userData = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+      const userData = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
       if (userData.name) setLocalUser(userData)
       setIsAuthenticated(true)
     } catch { /* ignore */ }
@@ -123,7 +123,7 @@ export default function Home() {
               <circle cx="16" cy="16" r="4" fill="white"/>
             </svg>
           </div>
-          <p className="text-sm" style={{ color: 'var(--text3)' }}>Loading Milliebot Command Center...</p>
+          <p className="text-sm" style={{ color: 'var(--text3)' }}>Loading Zynthr Command Center...</p>
         </div>
       </div>
     )

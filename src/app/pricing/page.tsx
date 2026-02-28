@@ -26,7 +26,7 @@ export default function PricingPage() {
       return
     }
     if (planKey === 'enterprise') {
-      window.location.href = 'mailto:sales@milliebot.com?subject=Enterprise%20Plan%20Inquiry'
+      window.location.href = 'mailto:sales@zynthr.com?subject=Enterprise%20Plan%20Inquiry'
       return
     }
     if (!STRIPE_CONFIGURED) return
@@ -46,7 +46,7 @@ export default function PricingPage() {
         {/* Header */}
         <div className="text-center mb-4">
           <Link href="/" className="inline-flex items-center gap-2 mb-8 text-sm font-medium hover:underline" style={{ color: 'var(--blue)' }}>
-            ← Back to Milliebot
+            ← Back to Zynthr
           </Link>
           <h1 className="text-4xl font-bold mb-3" style={{ color: 'var(--text)' }}>
             Simple, transparent pricing
@@ -364,7 +364,7 @@ export default function PricingPage() {
 
         {/* Footer */}
         <div className="text-center mt-12">
-          <p className="text-xs" style={{ color: 'var(--text4)' }}>© 2026 Milliebot Inc. All rights reserved.</p>
+          <p className="text-xs" style={{ color: 'var(--text4)' }}>© 2026 Zynthr Inc. All rights reserved.</p>
         </div>
       </div>
     </div>

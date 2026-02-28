@@ -10,14 +10,14 @@ export default function WelcomeBanner({ onNavigate }: WelcomeBannerProps) {
   const [dismissed, setDismissed] = useState(true)
 
   useEffect(() => {
-    const wasDismissed = localStorage.getItem('milliebot_welcome_dismissed') === 'true'
+    const wasDismissed = localStorage.getItem('zynthr_welcome_dismissed') === 'true'
     setDismissed(wasDismissed)
   }, [])
 
   if (dismissed) return null
 
   const handleDismiss = () => {
-    localStorage.setItem('milliebot_welcome_dismissed', 'true')
+    localStorage.setItem('zynthr_welcome_dismissed', 'true')
     setDismissed(true)
   }
 
@@ -44,7 +44,7 @@ export default function WelcomeBanner({ onNavigate }: WelcomeBannerProps) {
       </button>
 
       <div className="pr-8">
-        <h2 className="text-2xl font-bold text-white mb-1">Welcome to Milliebot! 🎉</h2>
+        <h2 className="text-2xl font-bold text-white mb-1">Welcome to Zynthr! 🎉</h2>
         <p className="text-white/80 mb-5 text-sm">
           Your AI-powered command center is ready. Let&apos;s get you set up in 3 quick steps.
         </p>

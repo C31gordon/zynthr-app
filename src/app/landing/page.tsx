@@ -38,7 +38,7 @@ export default function LandingPage() {
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${colors.blue}, ${colors.teal})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 16 }}>M</div>
-          <span style={{ fontWeight: 700, fontSize: 20 }}>Milliebot</span>
+          <span style={{ fontWeight: 700, fontSize: 20 }}>Zynthr</span>
         </div>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
           <Link href="/pricing" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>Pricing</Link>
@@ -66,7 +66,7 @@ export default function LandingPage() {
 
       {/* Problem / Solution */}
       <section style={{ padding: '80px 20px', maxWidth: 1100, margin: '0 auto' }}>
-        <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 700, marginBottom: 12 }}>The Old Way vs. The Milliebot Way</h2>
+        <h2 style={{ textAlign: 'center', fontSize: 32, fontWeight: 700, marginBottom: 12 }}>The Old Way vs. The Zynthr Way</h2>
         <p style={{ textAlign: 'center', color: '#64748b', marginBottom: 48, fontSize: 16 }}>Property management is ready for an upgrade.</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
           {problems.map((p, i) => (
@@ -146,7 +146,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{ padding: '40px 20px', borderTop: '1px solid rgba(255,255,255,0.06)', textAlign: 'center' }}>
-        <p style={{ color: '#475569', fontSize: 13 }}>© 2026 Milliebot. All rights reserved. Built by Courtney Gordon.</p>
+        <p style={{ color: '#475569', fontSize: 13 }}>© 2026 Zynthr. All rights reserved. Built by Courtney Gordon.</p>
       </footer>
     </div>
   )

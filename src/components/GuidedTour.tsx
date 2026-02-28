@@ -63,7 +63,7 @@ export default function GuidedTour({ active, onComplete, onNavigate }: GuidedTou
   const tooltipRef = useRef<HTMLDivElement>(null)
 
   const finish = useCallback(() => {
-    localStorage.setItem('milliebot_tour_completed', 'true')
+    localStorage.setItem('zynthr_tour_completed', 'true')
     onComplete()
   }, [onComplete])
 

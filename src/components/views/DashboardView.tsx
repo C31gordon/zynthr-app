@@ -118,7 +118,7 @@ export default function DashboardView({ userName, orgName }: { userName?: string
             {getGreeting()}, {userName || 'Courtney'}
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text3)' }}>
-            {orgName || 'Milliebot'} — Owner Dashboard • {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            {orgName || 'Zynthr'} — Owner Dashboard • {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">

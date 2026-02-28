@@ -12,7 +12,7 @@ function SubdomainBadge() {
   if (!subdomain) return null
   return (
     <div className="text-[10px] truncate" style={{ color: 'var(--text4)', opacity: 0.7 }}>
-      {subdomain}.milliebot.ai
+      {subdomain}.zynthr.ai
     </div>
   )
 }
@@ -51,10 +51,10 @@ const navItems: { id: ViewType; label: string; icon: string; section?: string }[
 function HipaaModal({ onClose }: { onClose: () => void }) {
   const [tenantId, setTenantId] = useState('')
   useEffect(() => {
-    let id = localStorage.getItem('milliebot_tenant_id')
+    let id = localStorage.getItem('zynthr_tenant_id')
     if (!id) {
       id = crypto.randomUUID()
-      localStorage.setItem('milliebot_tenant_id', id)
+      localStorage.setItem('zynthr_tenant_id', id)
     }
     setTenantId(id)
   }, [])
@@ -106,7 +106,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle, o
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+        const stored = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
         if (stored.baaDocuSignRequested && !stored.baaSignedDigitally) {
           setBaaPending(true)
         }
@@ -138,7 +138,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle, o
         </div>
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>{(orgName || 'Milliebot')}</div>
+            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>{(orgName || 'Zynthr')}</div>
             <div className="text-[11px] font-medium" style={{ color: 'var(--text4)' }}>Command Center</div>
             <SubdomainBadge />
           </div>
@@ -231,7 +231,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle, o
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-semibold truncate" style={{ color: 'var(--text)' }}>{userName || 'Courtney Gordon'}</div>
-              <div className="text-[11px]" style={{ color: 'var(--text4)' }}>Owner • {orgName || 'Milliebot'}</div>
+              <div className="text-[11px]" style={{ color: 'var(--text4)' }}>Owner • {orgName || 'Zynthr'}</div>
             </div>
           </div>
         </div>

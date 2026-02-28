@@ -1,7 +1,7 @@
 import { randomBytes, createHmac } from 'crypto'
 import { cookies } from 'next/headers'
 
-const CSRF_SECRET = process.env.CSRF_SECRET || 'milliebot-csrf-secret-change-in-prod'
+const CSRF_SECRET = process.env.CSRF_SECRET || 'zynthr-csrf-secret-change-in-prod'
 const CSRF_COOKIE = 'csrf-token'
 const CSRF_HEADER = 'x-csrf-token'
 

@@ -3,7 +3,7 @@ export const BAA_CONTENT = `BUSINESS ASSOCIATE AGREEMENT
 Between:
 
 Covered Entity: _____________________________ ("Covered Entity")
-Business Associate: Milliebot, operated by Ardexa LLC ("Business Associate")
+Business Associate: Zynthr, operated by Ardexa LLC ("Business Associate")
 
 Effective Date: _____________________________
 

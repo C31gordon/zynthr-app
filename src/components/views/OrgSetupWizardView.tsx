@@ -268,21 +268,21 @@ export default function OrgSetupWizardView() {
     const handleDigitalSign = () => {
       if (!baaSignerName.trim() || !baaSignerTitle.trim()) return
       const now = new Date().toISOString()
-      const stored = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+      const stored = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
       stored.baaSignedDigitally = true
       stored.baaSignedAt = now
       stored.baaSignerName = baaSignerName.trim()
       stored.baaSignerTitle = baaSignerTitle.trim()
-      localStorage.setItem('milliebot_user', JSON.stringify(stored))
+      localStorage.setItem('zynthr_user', JSON.stringify(stored))
       setBaaSigned(true)
     }
 
     const handleDocuSign = () => {
       const now = new Date().toISOString()
-      const stored = JSON.parse(localStorage.getItem('milliebot_user') || '{}')
+      const stored = JSON.parse(localStorage.getItem('zynthr_user') || '{}')
       stored.baaDocuSignRequested = true
       stored.baaDocuSignRequestedAt = now
-      localStorage.setItem('milliebot_user', JSON.stringify(stored))
+      localStorage.setItem('zynthr_user', JSON.stringify(stored))
       setBaaDocuSignSent(true)
     }
 
@@ -388,7 +388,7 @@ export default function OrgSetupWizardView() {
     <div>
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: 'var(--text)' }}>🔒 Permission Tiers</h2>
       <p style={{ color: 'var(--text3)', marginBottom: 20, fontSize: 14 }}>
-        Milliebot uses a 4-tier RKBAC (Role-Knowledge-Based Access Control) system. Set defaults for each department.
+        Zynthr uses a 4-tier RKBAC (Role-Knowledge-Based Access Control) system. Set defaults for each department.
       </p>
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
         {TIERS.map((t, i) => (

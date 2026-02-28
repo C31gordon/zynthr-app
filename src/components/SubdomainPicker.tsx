@@ -70,7 +70,7 @@ export default function SubdomainPicker({ value, onChange, onValidChange }: Subd
           style={{ color: 'var(--text)', border: 'none' }}
         />
         <span className="px-3 py-3 text-sm font-medium flex-shrink-0" style={{ color: 'var(--text4)', background: 'rgba(255,255,255,0.03)', borderLeft: '1px solid var(--border)' }}>
-          .milliebot.ai
+          .zynthr.ai
         </span>
         <span className="px-2 flex-shrink-0" style={{ fontSize: 16 }}>
           {status === 'valid' && '✅'}
@@ -80,7 +80,7 @@ export default function SubdomainPicker({ value, onChange, onValidChange }: Subd
       {error && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{error}</p>}
       {status === 'valid' && value && (
         <p className="text-xs mt-1" style={{ color: '#22c55e' }}>
-          Your workspace will be at <strong>{value}.milliebot.ai</strong>
+          Your workspace will be at <strong>{value}.zynthr.ai</strong>
         </p>
       )}
     </div>
