@@ -29,7 +29,7 @@ const deptIcons: Record<string, string> = {
   IT: '💻', Training: '📚', Maintenance: '🔧',
 }
 
-export default function DashboardView({ userName }: { userName?: string }) {
+export default function DashboardView({ userName, orgName }: { userName?: string; orgName?: string }) {
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month'>('today')
   const [currentTime, setCurrentTime] = useState(new Date())
   const [loading, setLoading] = useState(true)
@@ -118,7 +118,7 @@ export default function DashboardView({ userName }: { userName?: string }) {
             {getGreeting()}, {userName || 'Courtney'}
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text3)' }}>
-            RISE Real Estate — Owner Dashboard • {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            {orgName || 'Milliebot'} — Owner Dashboard • {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">

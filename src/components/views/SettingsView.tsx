@@ -207,7 +207,7 @@ export default function SettingsView() {
 }
 
 function GeneralSettings({ showToast }: { showToast: (m: string) => void }) {
-  const [orgName, setOrgName] = useState('RISE Real Estate')
+  const [orgName, setOrgName] = useState(() => { if (typeof window !== 'undefined') { const u = localStorage.getItem('milliebot_user'); if (u) { try { return JSON.parse(u).orgName || 'Milliebot' } catch { return 'Milliebot' } } } return 'Milliebot' })
   const [industry, setIndustry] = useState('Multifamily Real Estate')
   const [size, setSize] = useState('~30,000 units')
   const [contact, setContact] = useState('cgordon@risere.com')

@@ -3,6 +3,8 @@
 type ViewType = 'dashboard' | 'agents' | 'chat' | 'tickets' | 'suggestions' | 'workflows' | 'policies' | 'audit' | 'settings' | 'onboarding' | 'training' | 'healthcare' | 'setup' | 'birthcenter' | 'patientdash' | 'orgsetup'
 
 interface SidebarProps {
+  orgName?: string
+  userName?: string
   activeView: ViewType
   onNavigate: (view: ViewType) => void
   collapsed: boolean
@@ -28,7 +30,7 @@ const navItems: { id: ViewType; label: string; icon: string; section?: string }[
   { id: 'settings', label: 'Settings', icon: '⚙️', section: 'System' },
 ]
 
-export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }: SidebarProps) {
+export default function Sidebar({ activeView, onNavigate, collapsed, onToggle, orgName, userName }: SidebarProps) {
   let lastSection = ''
 
   return (
@@ -53,7 +55,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
         </div>
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>RISE</div>
+            <div className="text-sm font-bold truncate" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>{(orgName || 'Milliebot')}</div>
             <div className="text-[11px] font-medium" style={{ color: 'var(--text4)' }}>Command Center</div>
           </div>
         )}
@@ -109,8 +111,8 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle }:
               CG
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-semibold truncate" style={{ color: 'var(--text)' }}>Courtney Gordon</div>
-              <div className="text-[11px]" style={{ color: 'var(--text4)' }}>Owner • RISE</div>
+              <div className="text-xs font-semibold truncate" style={{ color: 'var(--text)' }}>{userName || 'Courtney Gordon'}</div>
+              <div className="text-[11px]" style={{ color: 'var(--text4)' }}>Owner • {orgName || 'Milliebot'}</div>
             </div>
           </div>
         </div>

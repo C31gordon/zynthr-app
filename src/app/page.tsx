@@ -115,7 +115,7 @@ export default function Home() {
 
   const renderView = () => {
     switch (activeView) {
-      case 'dashboard': return <><WelcomeBanner onNavigate={(v) => handleNavigate(v as ViewType)} /><DashboardView userName={localUser?.name} /></>
+      case 'dashboard': return <><WelcomeBanner onNavigate={(v) => handleNavigate(v as ViewType)} /><DashboardView userName={localUser?.name} orgName={localUser?.orgName} /></>
       case 'agents': return <AgentsView />
       case 'chat': return <ChatView />
       case 'tickets': return <TicketsView />
@@ -131,7 +131,7 @@ export default function Home() {
       case 'birthcenter': return <BirthCenterView />
       case 'patientdash': return <PatientDashboardView />
       case 'orgsetup': return <OrgSetupWizardView />
-      default: return <DashboardView userName={localUser?.name} />
+      default: return <DashboardView userName={localUser?.name} orgName={localUser?.orgName} />
     }
   }
 
@@ -145,7 +145,7 @@ export default function Home() {
       <div className="transition-transform duration-300"
         style={{ position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 60, transform: isMobile && !mobileMenuOpen ? 'translateX(-100%)' : 'translateX(0)' }}>
         <Sidebar activeView={activeView} onNavigate={handleNavigate} collapsed={isMobile ? false : sidebarCollapsed}
-          onToggle={() => isMobile ? setMobileMenuOpen(false) : setSidebarCollapsed(!sidebarCollapsed)} />
+          onToggle={() => isMobile ? setMobileMenuOpen(false) : setSidebarCollapsed(!sidebarCollapsed)} orgName={localUser?.orgName} userName={localUser?.name} />
       </div>
       <div className="flex-1 flex flex-col min-h-screen transition-all duration-300" style={{ marginLeft: isMobile ? 0 : sidebarWidth }}>
         <TopBar
