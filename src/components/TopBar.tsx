@@ -85,10 +85,10 @@ export default function TopBar({ user, localUser, isAuthenticated, onNavigate, i
   }
 
   // Determine display name and email
-  const displayName = localUser?.name || (DEMO_MODE ? DEMO_USER.full_name : user?.email?.split('@')[0] || 'User')
+  const displayName = localUser?.name || (DEMO_MODE ? DEMO_USER.full_name : user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User')
   const displayEmail = localUser?.email || (DEMO_MODE ? DEMO_USER.email : user?.email)
   const displayOrg = localUser?.orgName || (DEMO_MODE ? DEMO_USER.tenant : '')
-  const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
   const displayRole = DEMO_MODE && !isAuthenticated ? DEMO_USER.role : (localUser ? 'Member' : '')
 
   const notifications = [

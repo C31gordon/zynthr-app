@@ -114,6 +114,13 @@ export default function OnboardingPage() {
         return
       }
 
+      // Cache org info for the dashboard (RLS may block server query)
+      localStorage.setItem('zynthr_org', JSON.stringify({
+        name: companyName,
+        industry,
+        companySize,
+        departments: selectedDepts,
+      }))
       router.push('/')
     } catch {
       setError('Network error. Please try again.')

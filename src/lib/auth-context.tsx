@@ -159,7 +159,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return u.orgName || DEMO_USER.tenant
         } catch { return DEMO_USER.tenant }
       })()
-    : organization?.name || null
+    : organization?.name || (() => {
+        if (typeof window === 'undefined') return null
+        try {
+          const cached = JSON.parse(localStorage.getItem('zynthr_org') || '{}')
+          return cached.name || null
+        } catch { return null }
+      })()
 
   return (
     <AuthContext.Provider value={{

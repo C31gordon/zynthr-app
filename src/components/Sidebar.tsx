@@ -225,10 +225,10 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggle, o
           <div className="flex items-center gap-3 px-2 py-2 rounded-lg cursor-pointer transition-colors hover:bg-white/5">
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
               style={{ background: 'linear-gradient(135deg, var(--green), var(--teal))', color: '#000' }}>
-              CG
+              {(userName || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-semibold truncate" style={{ color: 'var(--text)' }}>{userName || 'Courtney Gordon'}</div>
+              <div className="text-xs font-semibold truncate" style={{ color: 'var(--text)' }}>{userName || 'User'}</div>
               <div className="text-[11px]" style={{ color: 'var(--text4)' }}>Owner • {orgName || 'Zynthr'}</div>
             </div>
           </div>
