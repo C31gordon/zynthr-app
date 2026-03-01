@@ -44,7 +44,10 @@ export async function POST(request: NextRequest) {
         connected_systems: systems || [],
         model: aiModel || 'claude-4-sonnet',
         icon: emoji || '🤖',
-        permission_tier: permissionTier || 'Tier 3 Manager',
+        permission_tier: (() => {
+          const tierMap: Record<string, number> = { 'Tier 1 Owner/Executive': 1, 'Tier 2 Dept Head': 2, 'Tier 3 Manager': 3, 'Tier 4 Specialist': 4 }
+          return tierMap[permissionTier] || 3
+        })(),
       })
       .select('*, department:departments(id, name)')
       .single()
