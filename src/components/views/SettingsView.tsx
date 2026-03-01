@@ -749,8 +749,35 @@ function AgreementsSection() {
             </div>
           </div>
           <button className="text-xs px-3 py-1.5 rounded-lg shrink-0 ml-3"
-            style={{ background: 'var(--bg3)', color: 'var(--text4)', cursor: 'not-allowed', opacity: 0.6 }}
-            title="Coming soon">
+            style={{ background: 'var(--bg3)', color: 'var(--accent)', cursor: 'pointer', border: '1px solid var(--border)' }}
+            title={`Download ${item.name}`}
+            onClick={() => {
+              const loadAndOpen = async () => {
+                let title = '', content = '', sigInfo = ''
+                if (item.name === 'Terms of Service') {
+                  const { TERMS_OF_SERVICE } = await import('@/lib/legal-docs')
+                  title = 'Zynthr \u2014 Terms of Service'; content = TERMS_OF_SERVICE
+                  if (agreements.tosAcceptedAt) sigInfo = '\n\n---\nAccepted on: ' + formatDate(agreements.tosAcceptedAt)
+                } else if (item.name === 'Privacy Policy') {
+                  const { PRIVACY_POLICY } = await import('@/lib/legal-docs')
+                  title = 'Zynthr \u2014 Privacy Policy'; content = PRIVACY_POLICY
+                  if (agreements.privacyAcceptedAt) sigInfo = '\n\n---\nAccepted on: ' + formatDate(agreements.privacyAcceptedAt)
+                } else {
+                  const { BAA_CONTENT } = await import('@/lib/baa-content')
+                  title = 'Zynthr \u2014 Business Associate Agreement'; content = BAA_CONTENT
+                  if (agreements.baaSignedDigitally && agreements.baaSignerName) {
+                    const a = agreements as Record<string, unknown>
+                    sigInfo = '\n\n---\nDIGITALLY SIGNED\nSigner: ' + agreements.baaSignerName + '\nTitle: ' + (a.baaSignerTitle || 'N/A') + '\nOrganization: ' + (a.baaOrgName || 'N/A') + '\nDate: ' + formatDate(agreements.baaSignedAt) + '\nMethod: Digital signature via Zynthr platform'
+                  }
+                }
+                const w = window.open('', '_blank')
+                if (!w) return
+                const esc = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                w.document.write('<!DOCTYPE html><html><head><title>' + title + '</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.6;color:#1a1a1a;font-size:14px}h1{font-size:20px;border-bottom:2px solid #1a1a1a;padding-bottom:8px}pre{white-space:pre-wrap;word-wrap:break-word;font-family:inherit;font-size:14px}.tip{background:#3B82F6;color:white;padding:12px 20px;border-radius:8px;margin-bottom:24px;font-family:sans-serif;font-size:14px}@media print{.tip{display:none}}</style></head><body><div class="tip"><strong>\ud83d\udca1</strong> Press Ctrl+P (Cmd+P) to save as PDF</div><h1>' + title + '</h1><pre>' + esc(content + sigInfo) + '</pre></body></html>')
+                w.document.close()
+              }
+              loadAndOpen()
+            }}>
             Download PDF
           </button>
         </div>
