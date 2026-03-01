@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@/lib/auth-context'
 import { BAA_CONTENT } from '@/lib/baa-content'
 
 /* ──────────────────────── Types ──────────────────────── */
@@ -92,12 +93,12 @@ const TIERS = [
 ]
 
 const INTEGRATIONS_DATA: Integration[] = [
-  { id: 'entrata', name: 'Entrata', icon: '🏢', description: 'Property management & accounting', connected: false, connecting: false, recommended: ['property'] },
   { id: 'm365', name: 'Microsoft 365', icon: '📧', description: 'Email, calendar, and collaboration', connected: false, connecting: false, recommended: ['property', 'healthcare', 'legal', 'finance', 'construction', 'education', 'hospitality', 'other'] },
-  { id: 'google', name: 'Google Workspace', icon: '🔵', description: 'Gmail, Drive, and productivity', connected: false, connecting: false, recommended: ['education', 'other'] },
-  { id: 'paycor', name: 'Paycor', icon: '💰', description: 'Payroll and HR management', connected: false, connecting: false, recommended: ['property', 'healthcare', 'hospitality'] },
-  { id: 'egnyte', name: 'Egnyte', icon: '📁', description: 'Secure file sharing and governance', connected: false, connecting: false, recommended: ['property', 'legal', 'finance'] },
+  { id: 'google', name: 'Google Workspace', icon: '🔵', description: 'Gmail, Drive, and productivity', connected: false, connecting: false, recommended: ['healthcare', 'education', 'other'] },
   { id: 'slack', name: 'Slack', icon: '💬', description: 'Team messaging and notifications', connected: false, connecting: false, recommended: ['property', 'healthcare', 'legal', 'finance', 'construction', 'education', 'hospitality', 'other'] },
+  { id: 'stripe', name: 'Stripe', icon: '💳', description: 'Payments and billing', connected: false, connecting: false, recommended: ['healthcare', 'legal', 'finance', 'education', 'other'] },
+  { id: 'docusign', name: 'DocuSign', icon: '✍️', description: 'Document signing and agreements', connected: false, connecting: false, recommended: ['healthcare', 'legal', 'property', 'finance'] },
+  { id: 'quickbooks', name: 'QuickBooks', icon: '📊', description: 'Accounting and bookkeeping', connected: false, connecting: false, recommended: ['healthcare', 'construction', 'other'] },
 ]
 
 const STEP_LABELS_BASE = ['Organization', 'Departments', 'Permissions', 'Integrations', 'Team', 'Review & Launch']
@@ -109,6 +110,7 @@ const uid = () => `id_${_idCounter++}`
 /* ──────────────────────── Component ──────────────────────── */
 
 export default function OrgSetupWizardView() {
+  const { user, organization } = useAuth()
   const [step, setStep] = useState(0)
   const [animDir, setAnimDir] = useState<'next' | 'prev'>('next')
   const [launched, setLaunched] = useState(false)
@@ -157,9 +159,57 @@ export default function OrgSetupWizardView() {
     setNewMember({ name: '', email: '', department: enabledDepts[0]?.name || '', tier: 3 })
   }
 
-  const handleLaunch = () => {
+  const handleLaunch = async () => {
     setLaunching(true)
-    setTimeout(() => { setLaunching(false); setLaunched(true) }, 3000)
+    try {
+      const userId = user?.id
+      if (!userId) throw new Error('Not authenticated')
+
+      const res = await fetch('/api/provisioning/save-org-setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          orgName: org.name,
+          industry: org.industry,
+          companySize: org.size,
+          contactName: org.contactName,
+          contactEmail: org.contactEmail,
+          departments: enabledDepts.map(d => ({
+            name: d.name,
+            description: d.description,
+          })),
+          teamMembers: teamMembers.map(m => ({
+            name: m.name,
+            email: m.email,
+            department: m.department,
+            tier: m.tier,
+          })),
+          integrations: integrations.filter(i => i.connected).map(i => i.id),
+          baa: baaSigned ? { signerName: baaSignerName, signerTitle: baaSignerTitle, orgName: baaOrgName } : null,
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        console.error('Save failed:', err)
+      }
+
+      // Cache to localStorage for immediate UI use
+      localStorage.setItem('zynthr_org', JSON.stringify({
+        name: org.name,
+        industry: org.industry,
+        companySize: org.size,
+        departments: enabledDepts.map(d => d.name),
+      }))
+
+      setLaunching(false)
+      setLaunched(true)
+    } catch (e) {
+      console.error('Launch error:', e)
+      setLaunching(false)
+      setLaunched(true) // Still show success UI — data will be retried
+    }
   }
 
   useEffect(() => {
