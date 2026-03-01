@@ -238,7 +238,7 @@ export default function SetupWizardView() {
                   }}>
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                      style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}>
+                      style={{ background: 'linear-gradient(135deg, #559CB5, #7c3aed)' }}>
                       {dept.icon}
                     </div>
                     <div className="flex-1">
@@ -310,7 +310,7 @@ export default function SetupWizardView() {
                 <div className="p-4 rounded-xl" style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
                   <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl"
-                      style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}>
+                      style={{ background: 'linear-gradient(135deg, #559CB5, #7c3aed)' }}>
                       {agent.icon}
                     </div>
                     <div className="flex-1">
@@ -434,7 +434,7 @@ export default function SetupWizardView() {
                 style={{ background: 'var(--bg3)', color: 'var(--text3)' }}>← Back</button>
               <button onClick={handleDeploy}
                 className="px-8 py-3 rounded-lg text-base font-bold text-white transition-all hover:scale-[1.02]"
-                style={{ background: 'linear-gradient(135deg, var(--green), var(--teal))', boxShadow: '0 0 20px rgba(74,222,128,0.3)' }}>
+                style={{ background: 'linear-gradient(135deg, #22c55e, #4ECDC4)', boxShadow: '0 0 20px rgba(74,222,128,0.3)' }}>
                 🚀 Deploy All
               </button>
             </div>
@@ -449,7 +449,7 @@ export default function SetupWizardView() {
             {deploying ? (
               <>
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 pulse-glow"
-                  style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))' }}>
+                  style={{ background: 'linear-gradient(135deg, #559CB5, #7c3aed)' }}>
                   <span className="text-3xl">⚡</span>
                 </div>
                 <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text)' }}>Deploying Your AI Team...</h2>
@@ -463,7 +463,7 @@ export default function SetupWizardView() {
             ) : deployed ? (
               <>
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4"
-                  style={{ background: 'linear-gradient(135deg, var(--green), var(--teal))', boxShadow: '0 0 40px rgba(74,222,128,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, #22c55e, #4ECDC4)', boxShadow: '0 0 40px rgba(74,222,128,0.3)' }}>
                   <span className="text-3xl">✅</span>
                 </div>
                 <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text)' }}>Deployment Complete!</h2>

@@ -328,7 +328,7 @@ export default function OrgSetupWizardView() {
                     </button>
                   </div>
                 ) : (
-                  <button onClick={() => setBaaSignMode('digital')} style={{ padding: '10px 20px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
+                  <button onClick={() => setBaaSignMode('digital')} style={{ padding: '10px 20px', background: 'linear-gradient(135deg, #559CB5, #7c3aed)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
                     Sign Digitally Now
                   </button>
                 )}
@@ -439,7 +439,7 @@ export default function OrgSetupWizardView() {
               padding: 16, borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg3)', position: 'relative',
             }}>
               {recommended && (
-                <span style={{ position: 'absolute', top: 8, right: 8, fontSize: 10, background: 'var(--accent)', color: '#fff', padding: '2px 8px', borderRadius: 10, fontWeight: 600 }}>Recommended</span>
+                <span style={{ position: 'absolute', top: 8, right: 8, fontSize: 10, background: 'linear-gradient(135deg, #559CB5, #7c3aed)', color: '#fff', padding: '2px 8px', borderRadius: 10, fontWeight: 600 }}>Recommended</span>
               )}
               <div style={{ fontSize: 28, marginBottom: 8 }}>{integ.icon}</div>
               <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{integ.name}</div>
@@ -450,7 +450,7 @@ export default function OrgSetupWizardView() {
                 <div style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 600 }}>⟳ Connecting…</div>
               ) : (
                 <button onClick={() => handleConnect(integ.id)} style={{
-                  padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                  padding: '8px 16px', background: 'linear-gradient(135deg, #559CB5, #7c3aed)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13, fontWeight: 600,
                 }}>Connect</button>
               )}
             </div>
@@ -519,8 +519,9 @@ export default function OrgSetupWizardView() {
             <strong>{org.name}</strong> is set up with {enabledDepts.length} departments, {connectedCount} integrations, and {teamMembers.length} team members.
           </p>
           <div style={{ fontSize: 40, marginBottom: 16 }}>🎊✨🚀✨🎊</div>
-          <button style={{
-            padding: '14px 32px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: 'pointer',
+          <button onClick={() => window.location.href = '/'} style={{
+            padding: '14px 32px', background: 'linear-gradient(135deg, #559CB5, #7c3aed)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(85,156,181,0.3)',
           }}>Go to Dashboard →</button>
         </div>
       )
@@ -532,7 +533,7 @@ export default function OrgSetupWizardView() {
           <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Deploying your organization…</h2>
           <p style={{ color: 'var(--text3)', fontSize: 14 }}>Setting up departments, permissions, and integrations…</p>
           <div style={{ width: 200, height: 4, background: 'var(--border)', borderRadius: 2, margin: '24px auto', overflow: 'hidden' }}>
-            <div style={{ width: '100%', height: '100%', background: 'var(--accent)', animation: 'progressFill 3s ease-in-out' }} />
+            <div style={{ width: '100%', height: '100%', background: 'linear-gradient(90deg, #559CB5, #7c3aed)', animation: 'progressFill 3s ease-in-out' }} />
           </div>
         </div>
       )
