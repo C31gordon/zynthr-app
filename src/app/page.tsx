@@ -78,15 +78,24 @@ export default function Home() {
     if (isMobile) setMobileMenuOpen(false)
   }, [isMobile])
 
+  // Hard timeout — never show loading for more than 5 seconds
+  const [forceLoaded, setForceLoaded] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setForceLoaded(true), 5000)
+    return () => clearTimeout(t)
+  }, [])
+
+  const isLoading = auth.isLoading && !forceLoaded
+
   // Redirect to login if not authenticated and not in demo mode
   useEffect(() => {
-    if (auth.isLoading) return
+    if (isLoading) return
     if (!DEMO_MODE && !auth.isAuthenticated) {
       window.location.href = '/login'
     }
-  }, [auth.isLoading, auth.isAuthenticated])
+  }, [isLoading, auth.isAuthenticated])
 
-  if (auth.isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
