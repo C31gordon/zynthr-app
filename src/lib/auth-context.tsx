@@ -88,32 +88,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    // Get initial session with timeout protection
-    const loadTimeout = setTimeout(() => {
-      console.warn('Auth loading timed out after 5s — forcing load complete')
-      setIsLoading(false)
-    }, 5000)
-
+    // Get initial session
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
       setSession(s)
       setUser(s?.user ?? null)
 
       if (s?.user) {
         try {
-          const { org, member } = await loadOrgContext(s.user.id)
-          setOrganization(org)
-          setMembership(member)
+          const result = await Promise.race([
+            loadOrgContext(s.user.id),
+            new Promise<{ org: null; member: null }>((resolve) =>
+              setTimeout(() => resolve({ org: null, member: null }), 4000)
+            ),
+          ])
+          setOrganization(result.org)
+          setMembership(result.member)
         } catch (e) {
           console.error('Failed to load org context:', e)
         }
       }
-      clearTimeout(loadTimeout)
       setIsLoading(false)
-    }).catch((e) => {
-      console.error('getSession failed:', e)
-      clearTimeout(loadTimeout)
-      setIsLoading(false)
-    })
+    }).catch(() => setIsLoading(false))
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
