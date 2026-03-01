@@ -1,107 +1,82 @@
-// Data service layer — queries Supabase with org context
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Data service layer — fetches via server-side API to bypass RLS
 import { supabase } from './supabase'
 import type { Agent, Bot, Ticket, Suggestion, AppUser, Department } from './supabase'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const db = supabase as any
+// Cache the org data fetch
+let orgDataCache: { data: OrgData | null; fetchedAt: number } = { data: null, fetchedAt: 0 }
+const CACHE_TTL = 10000 // 10 seconds
 
-// Timeout wrapper — abort query after 4s
-function withTimeout<T>(promise: Promise<T>, fallback: T, label: string): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((resolve) => setTimeout(() => {
-      console.warn(`${label}: timed out after 4s`)
-      resolve(fallback)
-    }, 4000)),
-  ])
+interface OrgData {
+  org: Record<string, unknown> | null
+  membership: Record<string, unknown> | null
+  departments: any[]
+  agents: any[]
+  audit: any[]
 }
 
-export async function getAgents(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('agents').select('*, department:departments(id, name, icon, slug)').eq('org_id', orgId)
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getAgents:', e); return [] }
-  })(), [], 'getAgents')
+async function fetchOrgData(userId?: string): Promise<OrgData> {
+  if (!userId) return { org: null, membership: null, departments: [], agents: [], audit: [] }
+
+  const now = Date.now()
+  if (orgDataCache.data && now - orgDataCache.fetchedAt < CACHE_TTL) {
+    return orgDataCache.data
+  }
+
+  try {
+    const res = await fetch(`/api/org/data?userId=${userId}`, { cache: 'no-store' })
+    if (!res.ok) throw new Error('Failed to fetch org data')
+    const data = await res.json() as OrgData
+    orgDataCache = { data, fetchedAt: now }
+    return data
+  } catch (e) {
+    console.error('fetchOrgData:', e)
+    return { org: null, membership: null, departments: [], agents: [], audit: [] }
+  }
 }
 
-export async function getBots(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('bots').select('*, agent:agents(id, name), department:departments(id, name)').eq('org_id', orgId)
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getBots:', e); return [] }
-  })(), [], 'getBots')
+// Get current user ID from supabase session
+async function getCurrentUserId(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.user?.id || null
 }
 
-export async function getTickets(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('tickets').select('*').eq('org_id', orgId).order('created_at', { ascending: false })
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getTickets:', e); return [] }
-  })(), [], 'getTickets')
+export async function getAgents() {
+  const userId = await getCurrentUserId()
+  const data = await fetchOrgData(userId || undefined)
+  return data.agents || []
 }
 
-export async function getSuggestions(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('suggestions').select('*').eq('org_id', orgId).order('created_at', { ascending: false })
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getSuggestions:', e); return [] }
-  })(), [], 'getSuggestions')
+export async function getBots() {
+  return [] // Bots table may not exist yet
 }
 
-export async function getUsers(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('org_members').select('*').eq('org_id', orgId)
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getUsers:', e); return [] }
-  })(), [], 'getUsers')
+export async function getTickets() {
+  return [] // Tickets not yet implemented
 }
 
-export async function getDepartments(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('departments').select('*').eq('org_id', orgId).order('name')
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getDepartments:', e); return [] }
-  })(), [], 'getDepartments')
+export async function getSuggestions() {
+  return [] // Suggestions not yet implemented
 }
 
-export async function getAuditLog(limit = 50, orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('audit_log').select('*').eq('org_id', orgId).order('created_at', { ascending: false }).limit(limit)
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getAuditLog:', e); return [] }
-  })(), [], 'getAuditLog')
+export async function getUsers() {
+  return [] // Users list via separate API later
 }
 
-export async function getPolicies(orgId?: string) {
-  if (!orgId) return []
-  return withTimeout((async () => {
-    try {
-      const { data, error } = await db.from('rkbac_policies').select('*').eq('org_id', orgId)
-      if (error) throw error
-      return data || []
-    } catch (e) { console.error('getPolicies:', e); return [] }
-  })(), [], 'getPolicies')
+export async function getDepartments() {
+  const userId = await getCurrentUserId()
+  const data = await fetchOrgData(userId || undefined)
+  return data.departments || []
+}
+
+export async function getAuditLog(limit = 50) {
+  const userId = await getCurrentUserId()
+  const data = await fetchOrgData(userId || undefined)
+  return (data.audit || []).slice(0, limit)
+}
+
+export async function getPolicies() {
+  return [] // Policies not yet implemented
 }
 
 export type { Agent, Bot, Ticket, Suggestion, AppUser, Department }

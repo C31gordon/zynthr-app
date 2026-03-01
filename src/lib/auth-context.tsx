@@ -38,26 +38,18 @@ export function useAuth() {
 }
 
 async function loadOrgContext(userId: string): Promise<{ org: Organization | null; member: OrgMember | null }> {
-  // Get the user's org membership
-  const { data: memberData } = await (supabase as any)
-    .from('org_members')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .limit(1)
-    .single()
-
-  if (!memberData) return { org: null, member: null }
-
-  const { data: orgData } = await (supabase as any)
-    .from('organizations')
-    .select('*')
-    .eq('id', memberData.org_id)
-    .single()
-
-  return { org: orgData as Organization | null, member: memberData as OrgMember | null }
+  try {
+    const res = await fetch(`/api/org/data?userId=${userId}`, { cache: 'no-store' })
+    if (!res.ok) return { org: null, member: null }
+    const data = await res.json()
+    return {
+      org: data.org as Organization | null,
+      member: data.membership as OrgMember | null,
+    }
+  } catch {
+    return { org: null, member: null }
+  }
 }
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
