@@ -449,10 +449,12 @@ export default function AgentsView() {
             {allAgents.length} active agents • {allBots.length} bots deployed
           </p>
         </div>
-        <button onClick={openWizard} className="px-4 py-2 rounded-lg font-medium text-sm transition-all hover:opacity-90"
-          style={{ background: 'var(--blue)', color: 'white' }}>
-          + Create New Agent
-        </button>
+        {allAgents.length > 0 && (
+          <button onClick={openWizard} className="px-4 py-2 rounded-lg font-medium text-sm transition-all hover:opacity-90"
+            style={{ background: 'var(--blue)', color: 'white' }}>
+            + Create New Agent
+          </button>
+        )}
       </div>
 
       {/* Agent Cards */}
