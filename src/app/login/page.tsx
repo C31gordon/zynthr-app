@@ -144,7 +144,7 @@ export default function LoginPage() {
     if (!orgName.trim()) errs.orgName = 'Organization name is required'
     if (!tosAccepted) errs.tos = 'You must agree to the Terms of Service and Privacy Policy'
     if (!subdomainValid) errs.subdomain = 'Please choose a valid workspace URL'
-    if (Object.keys(errs).length) { setErrors(errs); return }
+    if (Object.keys(errs).length) { setErrors(errs); window.scrollTo({ top: 0, behavior: 'smooth' }); return }
 
     setLoading(true)
 
@@ -187,10 +187,23 @@ export default function LoginPage() {
     }
 
     const userId = signUpData.user?.id
+    const gotSession = signUpData.session
+
     if (!userId) {
-      setErrors({ general: 'Sign-up succeeded but no user ID returned. Check your email for confirmation.' })
+      setErrors({ general: 'Sign-up failed. Please try again.' })
       setLoading(false)
       return
+    }
+
+    // If no session (email confirmation required), auto-sign-in immediately
+    if (!gotSession) {
+      const { error: autoSignInErr } = await supabase.auth.signInWithPassword({
+        email: signupEmail.trim(),
+        password: signupPassword,
+      })
+      if (autoSignInErr) {
+        console.warn('Auto-sign-in after signup failed:', autoSignInErr.message)
+      }
     }
 
     // Create organization
@@ -208,10 +221,7 @@ export default function LoginPage() {
 
     if (orgError) {
       console.error('Org creation error:', orgError)
-      // Don't block — user was created. They can set up org later.
-      setErrors({ general: 'Account created but org setup failed: ' + orgError.message })
-      setLoading(false)
-      return
+      // Don't block — user was created. Redirect anyway.
     }
 
     // Create org_member record
